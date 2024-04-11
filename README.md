@@ -63,6 +63,30 @@ Get a specific version of a document:
 ```typescript
 const documentVersion = await document.version("X.Y.Z");
 ```
+### Creating a document in a domain
+Steps to create a new document under a domain:
+1. Create a TCreateDocumentAndVersion object with the document path and data.
+```typescript
+const createDocumentAndVersion: TCreateDocumentAndVersion = {
+    document: { 
+        path: "document_path",
+        pathHash: "0x1234567890abcdef"
+    },
+    version: {
+        data: YOUR_AWESOME_JSON_DATA,
+        templates:[ "document_template_path"] // this field is optional
+    }
+};
+````
+2. Create a new document under the domain:
+```typescript
+const newDocument = await domain.createDocument("document_path", createDocumentAndVersion);
+```
+### Adding a template to a document
+Adding a template to a document:
+```typescript
+await document.addTemplate("template_path");
+```
 
 # Documentation
 For more detailed information on the Context SDK, please refer to the [official documentation](https://docs.ctx.xyz).
