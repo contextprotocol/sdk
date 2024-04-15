@@ -54,7 +54,7 @@ export const getDocument = async (
   }
 };
 
-export const addDocument = async (
+export const createDocument = async (
   fullPath: string,
   data: any,
   templates: string[],

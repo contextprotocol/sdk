@@ -16,19 +16,18 @@ First, import the SDK and create an instance of the Context object using your AP
 ```typescript
 import { Context } from '@contextprotocol/sdk';
 
-const ctx = new Context(apiKey);
+const ctx = new Context();
+```
+## Initializing the SDK
+To initialize the SDK, you need to provide the api key:
+```typescript
+await context.initSDK({ apiKey });
 ```
 
 ## Domains
-Retrieving all Domain Information
-```typescript
-const allDomainsInfo = await ctx.public.domains();
-const allDomainsInfo = await ctx.public.domains({offset: 1, limit: 10});
-```
-
 Retrieving info for all your domains:
 ```typescript
-const yourDomains = await ctx.domains();
+const yourDomain = await ctx.domain();
 ```
 
 To get information about a domain:
@@ -37,11 +36,6 @@ const domain = await ctx.domain("domain_name");
 ```
 
 ## Documents
-Retrieving all documents from public api
-```typescript
-const allDocuments = await ctx.public.documents();
-const allDocuments = await ctx.public.documents({offset: 1, limit: 10});
-```
 
 Retrieve all documents within a domain or a specific document:
 ```typescript
@@ -65,27 +59,43 @@ const documentVersion = await document.version("X.Y.Z");
 ```
 ### Creating a document in a domain
 Steps to create a new document under a domain:
-1. Create a TCreateDocumentAndVersion object with the document path and data.
+1. Create a data object.
 ```typescript
-const createDocumentAndVersion: TCreateDocumentAndVersion = {
-    document: { 
-        path: "document_path",
-        pathHash: "0x1234567890abcdef"
-    },
-    version: {
-        data: YOUR_AWESOME_JSON_DATA,
-        templates:[ "document_template_path"] // this field is optional
-    }
-};
+const data: any = YOUR_AWESOME_JSON_DATA;
+const templates: string[] = ["template_path"]; // Optional
 ````
 2. Create a new document under the domain:
 ```typescript
-const newDocument = await domain.createDocument("document_path", createDocumentAndVersion);
+const newDocument = await domain.createDocument("document_path", data, templates);
 ```
 ### Adding a template to a document
 Adding a template to a document:
 ```typescript
 await document.addTemplate("template_path");
+```
+### Creating a template
+Creating a template:
+```typescript
+const myDataType = `interface User{
+    name: string;
+    age: number;
+}`;
+const schema = generateJsonSchema(dataName, myDataType);
+const template = await domain.createTemplate("template_path", schema);
+````
+
+## Public
+### Domain
+Retrieving all Domain Information
+```typescript
+const allDomainsInfo = await ctx.public.domains();
+const allDomainsInfo = await ctx.public.domains({offset: 1, limit: 10});
+```
+### Document
+Retrieving all documents from public api
+```typescript
+const allDocuments = await ctx.public.documents();
+const allDocuments = await ctx.public.documents({offset: 1, limit: 10});
 ```
 
 # Documentation

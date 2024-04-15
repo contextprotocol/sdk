@@ -40,8 +40,8 @@ export class Domain {
     return new Document(tDocument);
   };
 
-  addDocument = async (path: string, data: any, templates: string[] = []) => {
-    const tDocument = await doclib.addDocument(
+  createDocument = async (path: string, data: any, templates: string[] = []) => {
+    const tDocument = await doclib.createDocument(
       `${this.name}/${path}`,
       data,
         templates,
@@ -52,7 +52,7 @@ export class Domain {
   };
 
   createTemplate = async (path: string, data: any) => {
-    const tDocument = await doclib.addDocument(
+    const tDocument = await doclib.createDocument(
       `${this.name}/${path}`,
       data,
       [],
