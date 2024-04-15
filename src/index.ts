@@ -16,12 +16,21 @@ import { ContextConfig } from "./utils/ContextConfig";
 
 export class Context {
   private _contextConfig: ContextConfig;
-  constructor(apiKey: string, config?: Partial<Config>) {
+  private _domain: Domain | undefined;
+
+  constructor(config?: Partial<Config>) {
     this._contextConfig = ContextConfig.getInstance();
-    this._contextConfig.init(apiKey, config);
+    this._contextConfig.init(config);
   }
 
-  domains = async (
+  initSDK = async ( contextInit:{ apiKey: string }) => {
+    this._contextConfig.apiKey = contextInit.apiKey;
+
+    const domains = await this._domains();
+    this._domain = new Domain(domains.domains[0] as TDomain);
+  }
+
+  private _domains = async (
     domainFilter?: TDomainFilter,
   ): Promise<TAllDomainsResponse> => {
     const domainsResponse = await lib.getAllDomains(
@@ -36,7 +45,11 @@ export class Context {
     };
   };
 
-  domain = async (name: string): Promise<Domain> => {
+  domain = async (name?: string): Promise<Domain> => {
+    if (!name) {
+      return this._domain;
+    }
+
     const tDomain = await lib.getDomain(
       false,
       name,
@@ -50,7 +63,7 @@ export class Context {
     documentFilter?: TDocumentFilter,
   ): Promise<TAllDocumentsResponse> => {
     const documentsResponse = await lib.getAllDocuments(
-      false,
+      this._domain === undefined,
       documentFilter || {},
       this._contextConfig.apiKey,
       this._contextConfig.config,

@@ -12,10 +12,13 @@ export class ContextConfig {
     };
   };
 
-  public init = (apiKey: string, config?: Partial<Config>) => {
+  public init = (config?: Partial<Config>) => {
     this._config = this._generateConfig(config);
-    this._apiKey = apiKey;
   };
+
+  public set apiKey(apiKey: string) {
+    this._apiKey = apiKey;
+  }
 
   public get apiKey() {
     return this._apiKey;

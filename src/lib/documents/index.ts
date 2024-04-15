@@ -5,10 +5,10 @@ import { getHttpHeaders } from "../../utils/getHttpHeader";
 import { Config } from "../types";
 import {
   TAllDocumentsResponse,
-  TCreateDocumentWithVersion,
   TDocument,
   TDocumentFilter,
 } from "./types";
+import {extractPathAndVersionNumber, transformVersionNumberToObject} from "../../utils/utils";
 
 export const getAllDocuments = async (
   fromPublicEndpoint: boolean,
@@ -55,12 +55,29 @@ export const getDocument = async (
 };
 
 export const addDocument = async (
-  path: string,
-  createDoc: TCreateDocumentWithVersion,
+  fullPath: string,
+  data: any,
+  templates: string[],
   apiKey: string,
   config: Config,
+  isTemplate = false,
 ): Promise<TDocument> => {
-  const url = `${config.url}/documents/${path}`;
+
+  const url = `${config.url}/documents`;
+  const { pathOrId, versionNumber } = extractPathAndVersionNumber('', fullPath);
+  const versionFilter = transformVersionNumberToObject(versionNumber || '0.0.1');
+
+  const createDoc = {
+    document: {
+      path: pathOrId,
+        isTemplate,
+    },
+    version: {
+      data,
+      templates,
+      ... versionFilter
+    }
+  }
   try {
     const response = await axios.post(url, createDoc, {
       headers: getHttpHeaders(apiKey),

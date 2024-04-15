@@ -5,7 +5,7 @@ import * as documentlib from "./index";
 import { TDocument } from "./types";
 
 export class Document {
-  readonly _document: TDocument;
+  protected _document: TDocument;
   private _contextConfig: ContextConfig;
   readonly;
   constructor(document: TDocument) {

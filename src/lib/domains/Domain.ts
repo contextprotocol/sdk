@@ -40,13 +40,26 @@ export class Domain {
     return new Document(tDocument);
   };
 
-  addDocument = async (path: string, createDoc: TCreateDocumentWithVersion) => {
+  addDocument = async (path: string, data: any, templates: string[] = []) => {
     const tDocument = await doclib.addDocument(
       `${this.name}/${path}`,
-      createDoc,
+      data,
+        templates,
       this._contextConfig.apiKey,
       this._contextConfig.config,
     );
     return new Document(tDocument);
   };
+
+  createTemplate = async (path: string, data: any) => {
+    const tDocument = await doclib.addDocument(
+      `${this.name}/${path}`,
+      data,
+      [],
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+        true
+    );
+    return new Document(tDocument);
+  }
 }
