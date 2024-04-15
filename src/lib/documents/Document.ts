@@ -46,7 +46,7 @@ export class Document {
   async getVersion(versionNumber: string, publicEndpoint = false) {
     const tDoc = await documentlib.getDocument(
       publicEndpoint,
-      `${this._document.domainId.name}/${this.path}?v=${versionNumber}`,
+      `${this._document.domainId.name}/${this.path}?versionNumber=${versionNumber}`,
       this._contextConfig.apiKey,
       this._contextConfig.config,
     );

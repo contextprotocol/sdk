@@ -95,7 +95,7 @@ const allDomainsInfo = await ctx.public.domains({offset: 1, limit: 10});
 Retrieving all documents from public api
 ```typescript
 const allDocuments = await ctx.public.documents();
-const allDocuments = await ctx.public.documents({offset: 1, limit: 10});
+const allDocuments = await ctx.public.documents({offset: 1, limit: 10, name: "document_name", domain: "domain_name"});
 ```
 
 # Documentation

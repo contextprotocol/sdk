@@ -17,6 +17,8 @@ export type TDocument = TTimestamps & {
 export type TDocumentFilter = {
   offset?: number;
   limit?: number;
+  name?: string;
+  domain?: string;
 };
 
 export type TAllDocumentsResponse = {
