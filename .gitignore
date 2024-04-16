@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.tmp
+.idea
+.env
+.env.prod
+.env.development
+coverage/
+.npm
+.npmrc
+.vscode
+.nyc_output
+.data
+/secrets
+.secrets
