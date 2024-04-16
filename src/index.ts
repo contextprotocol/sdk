@@ -23,7 +23,7 @@ export class Context {
     this._contextConfig.init(config);
   }
 
-  initSDK = async ( contextInit:{ apiKey: string }) => {
+  init = async ( contextInit:{ apiKey: string }) => {
     this._contextConfig.apiKey = contextInit.apiKey;
 
     const domains = await this._domains();
