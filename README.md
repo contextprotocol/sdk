@@ -21,7 +21,7 @@ const ctx = new Context();
 ## Initializing the SDK
 To initialize the SDK, you need to provide the api key:
 ```typescript
-await ctx.initSDK({ apiKey });
+await ctx.init({ apiKey });
 ```
 
 ## Domains
@@ -92,7 +92,7 @@ const allDomainsInfo = await ctx.public.domains();
 const allDomainsInfo = await ctx.public.domains({offset: 1, limit: 10});
 ```
 ### Document
-Retrieving all documents from public api
+Retrieving all documents from public API
 ```typescript
 const allDocuments = await ctx.public.documents();
 const allDocuments = await ctx.public.documents({offset: 1, limit: 10, name: "document_name", domain: "domain_name"});
