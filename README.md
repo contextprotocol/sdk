@@ -21,7 +21,7 @@ const ctx = new Context();
 ## Initializing the SDK
 To initialize the SDK, you need to provide the api key:
 ```typescript
-await context.initSDK({ apiKey });
+await ctx.initSDK({ apiKey });
 ```
 
 ## Domains
