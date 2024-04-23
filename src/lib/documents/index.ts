@@ -65,7 +65,7 @@ export const createDocument = async (
 
   const url = `${config.url}/documents`;
   const { pathOrId, versionNumber } = extractPathAndVersionNumber('', fullPath);
-  const versionFilter = transformVersionNumberToObject(versionNumber || '0.0.1');
+  const versionFilter = transformVersionNumberToObject(versionNumber || '1.0.0');
 
   const createDoc = {
     document: {

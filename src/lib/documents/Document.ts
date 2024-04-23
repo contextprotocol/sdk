@@ -5,60 +5,60 @@ import * as documentlib from "./index";
 import { TDocument } from "./types";
 
 export class Document {
-  protected _document: TDocument;
-  private _contextConfig: ContextConfig;
-  readonly;
+  readonly #document: TDocument;
+  readonly #contextConfig: ContextConfig;
+
   constructor(document: TDocument) {
-    this._document = document;
-    this._contextConfig = ContextConfig.getInstance();
+    this.#document = document;
+    this.#contextConfig = ContextConfig.getInstance();
   }
 
   get path() {
-    return this._document.path;
+    return this.#document.path;
   }
   get versionNumber() {
-    return this._document.versionNumber;
+    return this.#document.versionNumber;
   }
 
   get data() {
     // eslint-disable-next-line  @typescript-eslint/no-unsafe-return
-    return this._document.version.data;
+    return this.#document.version.data;
   }
 
   get createdAt() {
-    return this._document.createdAt;
+    return this.#document.createdAt;
   }
   get updatedAt() {
-    return this._document.updatedAt;
+    return this.#document.updatedAt;
   }
 
   async versions(
     versionFilter?: TDocumentVersionFilter,
   ): Promise<TAllVersionsResponse> {
     return versionlib.getVersions(
-      `${this._document.domainId.name}/${this.path}`,
+      `${this.#document.domainId.name}/${this.path}`,
       versionFilter || {},
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
     );
   }
 
   async getVersion(versionNumber: string, publicEndpoint = false) {
     const tDoc = await documentlib.getDocument(
       publicEndpoint,
-      `${this._document.domainId.name}/${this.path}?versionNumber=${versionNumber}`,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
+      `${this.#document.domainId.name}/${this.path}?versionNumber=${versionNumber}`,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
     );
     return new Document(tDoc);
   }
 
   async addTemplate(templatePath: string): Promise<Document> {
     const tDoc = await documentlib.addTemplate(
-      `${this._document.domainId.name}/${this.path}`,
+      `${this.#document.domainId.name}/${this.path}`,
       templatePath,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
     );
     return new Document(tDoc);
   }

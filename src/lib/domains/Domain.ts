@@ -5,36 +5,36 @@ import { TCreateDocumentWithVersion } from "../documents/types";
 import { TDomain } from "./types";
 
 export class Domain {
-  readonly _domain: TDomain;
-  private _contextConfig: ContextConfig;
+  readonly #domain: TDomain;
+  readonly #contextConfig: ContextConfig;
 
   constructor(domain: TDomain) {
-    this._domain = domain;
-    this._contextConfig = ContextConfig.getInstance();
+    this.#domain = domain;
+    this.#contextConfig = ContextConfig.getInstance();
   }
 
   get name() {
-    return this._domain.name;
+    return this.#domain.name;
   }
 
   get nameHash() {
-    return this._domain.nameHash;
+    return this.#domain.nameHash;
   }
 
   get createdAt() {
-    return this._domain.createdAt;
+    return this.#domain.createdAt;
   }
 
   get updatedAt() {
-    return this._domain.updatedAt;
+    return this.#domain.updatedAt;
   }
 
   document = async (path: string, publicEndpoint = false) => {
     const tDocument = await doclib.getDocument(
       publicEndpoint,
       `${this.name}/${path}`,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
     );
 
     return new Document(tDocument);
@@ -45,8 +45,8 @@ export class Domain {
       `${this.name}/${path}`,
       data,
         templates,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
     );
     return new Document(tDocument);
   };
@@ -56,8 +56,8 @@ export class Domain {
       `${this.name}/${path}`,
       data,
       [],
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
         true
     );
     return new Document(tDocument);
