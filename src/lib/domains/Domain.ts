@@ -76,7 +76,7 @@ export class Domain {
 
   createTemplate = async (path: string, data: any) => {
     const tDocument = await doclib.createDocument(
-      `${this.name}/${path}`,
+      `${path}`,
       data,
       [],
       this.#contextConfig.apiKey,
