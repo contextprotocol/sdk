@@ -1,6 +1,6 @@
 {
   "name": "@contextprotocol/sdk",
-  "version": "0.9.1",
+  "version": "0.9.11",
   "description": "Context Protocol SDK",
   "main": "index.js",
   "files": [
