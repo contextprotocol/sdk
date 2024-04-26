@@ -17,6 +17,18 @@ export class Domain {
     return this.#domain.name;
   }
 
+  get documents() {
+    return this.#domain.documents;
+  }
+
+  get status() {
+    return this.#domain.status;
+  }
+
+  get owner() {
+    return this.#domain.owner;
+  }
+
   get nameHash() {
     return this.#domain.nameHash;
   }
