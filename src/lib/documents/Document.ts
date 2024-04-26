@@ -17,14 +17,15 @@ export class Document {
     return this.#document.path;
   }
   get versionNumber() {
-    return this.#document.versionNumber;
+    return this.#document.version.versionNumber;
   }
-
   get data() {
     // eslint-disable-next-line  @typescript-eslint/no-unsafe-return
     return this.#document.version.data;
   }
-
+  get templates() {
+    return this.#document.version.templates;
+  }
   get createdAt() {
     return this.#document.createdAt;
   }
@@ -47,16 +48,6 @@ export class Document {
     const tDoc = await documentlib.getDocument(
       publicEndpoint,
       `${this.#document.domainId.name}/${this.path}?versionNumber=${versionNumber}`,
-      this.#contextConfig.apiKey,
-      this.#contextConfig.config,
-    );
-    return new Document(tDoc);
-  }
-
-  async addTemplate(templatePath: string): Promise<Document> {
-    const tDoc = await documentlib.addTemplate(
-      `${this.#document.domainId.name}/${this.path}`,
-      templatePath,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );

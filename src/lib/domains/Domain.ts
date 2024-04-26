@@ -53,10 +53,21 @@ export class Domain {
   };
 
   createDocument = async (path: string, data: any, templates: string[] = []) => {
+
+    const versionIds = await Promise.all(templates.map(async (template) => {
+      const document = await doclib.getDocument(
+        false,
+        `${template}`,
+        this.#contextConfig.apiKey,
+        this.#contextConfig.config,
+      );
+      return document.version._id;
+    }));
+
     const tDocument = await doclib.createDocument(
-      `${this.name}/${path}`,
+      `${path}`,
       data,
-        templates,
+      versionIds,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
