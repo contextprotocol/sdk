@@ -25,7 +25,7 @@ await ctx.init({ apiKey });
 ```
 
 ## Domains
-Retrieving info for all your domains:
+Retrieving info for your domain:
 ```typescript
 const yourDomain = await ctx.domain();
 ```
@@ -33,6 +33,13 @@ const yourDomain = await ctx.domain();
 To get information about a domain:
 ```typescript
 const domain = await ctx.domain("domain_name");
+```
+### Domain properties
+```typescript
+domain.name;
+domain.nameHash;
+domain.createdAt;
+domain.updatedAt;
 ```
 
 ## Documents
@@ -45,7 +52,7 @@ const documentInVersionXYZ = await domain.document("document_path?v=X.Y.Z"); // 
 
 Retriving the document data:
 ```typescript
-const documentData = await document.data();
+document.data;
 ```
 
 Retrieving a document version list:
@@ -57,6 +64,15 @@ Get a specific version of a document:
 ```typescript
 const documentVersion = await document.version("X.Y.Z");
 ```
+### Document properties
+```typescript
+document.path
+document.versionNumber
+document.data
+document.createdAt
+document.updatedAt
+```
+
 ### Creating a document in a domain
 Steps to create a new document under a domain:
 1. Create a data object.
