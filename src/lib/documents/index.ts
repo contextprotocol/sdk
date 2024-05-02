@@ -88,6 +88,34 @@ export const createDocument = async (
   }
 };
 
+export const updateDocument = async (
+    fullPath: string,
+    data: any,
+    templates: string[],
+    versionNumber: string | undefined,
+    apiKey: string,
+    config: Config,
+    ): Promise<TDocument> => {
+    const url = `${config.url}/documents/${fullPath}`;
+    const updateDoc ={
+      data,
+      templates,
+      versionNumber
+    }
+    try {
+        const response = await axios.patch(
+        url,
+        updateDoc,
+        {
+            headers: getHttpHeaders(apiKey),
+        },
+        );
+        return response.data;
+    } catch (error) {
+        throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
+    }
+}
+
 export const addTemplate = async (
   path: string,
   template: string,

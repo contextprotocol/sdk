@@ -53,4 +53,16 @@ export class Document {
     );
     return new Document(tDoc);
   }
+
+  async update(data: any, templates: string[] = [], versionNumber?: string) {
+    const version = await documentlib.updateDocument(
+      `${this.#document.domainId.name}/${this.path}`,
+      data,
+      templates,
+        versionNumber,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
+    );
+    return new Document(version);
+  }
 }
