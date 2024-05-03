@@ -16,12 +16,7 @@ First, import the SDK and create an instance of the Context object using your AP
 ```typescript
 import { Context } from '@contextprotocol/sdk';
 
-const ctx = new Context();
-```
-## Initializing the SDK
-To initialize the SDK, you need to provide the api key:
-```typescript
-await ctx.init({ apiKey });
+const ctx = new Context({ apiKey });
 ```
 
 ## Domains
@@ -32,7 +27,7 @@ const yourDomain = await ctx.domain();
 
 To get information about a domain:
 ```typescript
-const domain = await ctx.domain("domain_name");
+const domain = await ctx.domain("domain_name"); // Get a specific domain or null if domain is not found
 ```
 ### Domain properties
 ```typescript
@@ -46,7 +41,7 @@ domain.updatedAt;
 
 Retrieve all documents within a domain or a specific document:
 ```typescript
-const document = await domain.document("document_path"); // Get a specific document
+const document = await domain.document("document_path"); // Get a specific document or null if document is not found
 const documentInVersionXYZ = await domain.document("document_path?v=X.Y.Z"); // Get a specific version of a document
 ```
 
@@ -108,21 +103,6 @@ const myDataType = `interface User{
 const schema = generateJsonSchema(dataName, myDataType);
 const template = await domain.createTemplate("template_path", schema);
 ````
-
-## Public
-### Domain
-Retrieving all Domain Information
-```typescript
-const allDomainsInfo = await ctx.public.domains();
-const allDomainsInfo = await ctx.public.domains({offset: 1, limit: 10});
-```
-### Document
-Retrieving all documents from public API
-```typescript
-const allDocuments = await ctx.public.documents();
-const allDocuments = await ctx.public.documents({offset: 1, limit: 10, name: "document_name", domain: "domain_name"});
-```
-
 # Documentation
 For more detailed information on the Context SDK, please refer to the [official documentation](https://docs.ctx.xyz).
 # License

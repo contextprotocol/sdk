@@ -59,7 +59,7 @@ export class Document {
       `${this.#document.domainId.name}/${this.path}`,
       data,
       templates,
-        versionNumber,
+      versionNumber,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );

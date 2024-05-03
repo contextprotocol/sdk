@@ -19,6 +19,7 @@ export type TDocumentFilter = {
   limit?: number;
   name?: string;
   domain?: string;
+  template?: boolean;
 };
 
 export type TAllDocumentsResponse = {
