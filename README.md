@@ -89,6 +89,15 @@ Adding a template to a document:
 ```typescript
 await document.addTemplate("template_path");
 ```
+### Updating a document
+Updating a document:
+```typescript
+const updatedData: any = YOUR_UPDATED_AWESOME_JSON_DATA;
+const templatesToInstall: string[] = ["template_path"]; // Optional
+const versionNumber = "X.Y.Z"; // Optional
+await document.update(updatedData, templatesToInstall, versionNumber);
+```
+
 ### Creating a template
 Creating a template:
 ```typescript
