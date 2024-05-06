@@ -1,120 +1,219 @@
 # Context SDK
 ## Introduction
-The Context SDK provides a powerful and flexible way to interact with Context, enabling developers to manage domains and documents programmatically. With this SDK, you can create, modify, and manage domains and their associated documents using Context's API.
+The Context SDK is a robust and flexible toolkit designed for developers to interact programmatically with Context Protocol. It allows for efficient management of your Documents through Context's API, streamlining operations such as creation, modification, and fetching data.
 
 ## Installation
-To start using the Context SDK in your TypeScript project, install it via npm:
+Install the Context SDK to your TypeScript project using npm:
+
 ```bash
-$ npm install @contextprotocol/sdk
+npm install @contextprotocol/sdk
 ```
 
 ## Quick Start
-This section walks you through setting up a basic connection and performing common operations with the Context SDK.
-Setting Up Your Connection
-First, import the SDK and create an instance of the Context object using your API key:
+This guide provides the basic steps to establish a connection and perform common operations using the Context SDK.
+
+### Setting Up Your Connection
+To use the Context SDK, you first need to obtain an API key. You can get your API key by creating an account at [app.ctx.xyz](https://app.ctx.xyz).
+
+Initialize the SDK with your API key to start interacting with Context services:
 
 ```typescript
 import { Context } from '@contextprotocol/sdk';
 
-const ctx = new Context();
-```
-## Initializing the SDK
-To initialize the SDK, you need to provide the api key:
-```typescript
-await ctx.init({ apiKey });
+const ctx = new Context({ apiKey: "your_api_key_here" }); // Replace with your API key
 ```
 
-## Domains
-Retrieving info for your domain:
+## Working with Domains
+
+### Fetch Domain Information
+Fetch details of a specific domain or the default domain associated with your API key:
+
 ```typescript
+// Fetch the default domain
 const yourDomain = await ctx.domain();
+
+// Fetch a specific domain
+const domain = await ctx.domain("domain_name");  // Returns null if not found
 ```
 
-To get information about a domain:
+### Domain Properties
+Access properties of a Domain:
+
 ```typescript
-const domain = await ctx.domain("domain_name");
+console.log(domain.name);
+console.log(domain.documents);
+console.log(domain.owner);
+console.log(domain.createdAt);
+console.log(domain.updatedAt);
 ```
-### Domain properties
+
+## Managing Documents
+
+### Fetch Documents
+Fetch a specific document, from any domain:
+
 ```typescript
-domain.name;
-domain.nameHash;
-domain.createdAt;
-domain.updatedAt;
+// Fetch a specific document
+const document = await ctx.document("document_path");  // Returns null if not found
+
+// Fetch a specific version of a document
+const document = await ctx.document("document_path");
+const documentInVersionXYZ = await ctx.document("document_path?v=X.Y.Z"); // Get a specific version of a document
 ```
 
-## Documents
+### Document Properties
+Access and display properties of a document:
 
-Retrieve all documents within a domain or a specific document:
 ```typescript
-const document = await domain.document("document_path"); // Get a specific document
-const documentInVersionXYZ = await domain.document("document_path?v=X.Y.Z"); // Get a specific version of a document
+console.log(document.path);
+console.log(document.versionNumber);
+console.log(document.data);
+console.log(document.createdAt);
+console.log(document.updatedAt);
+console.log(JSON.stringify(document));
 ```
 
-Retriving the document data:
-```typescript
-document.data;
-```
+### List Document Versions
+Fetch a list of all versions of a document:
 
-Retrieving a document version list:
 ```typescript
 const documentVersions = await document.versions();
 ```
 
-Get a specific version of a document:
+### Fetch a Specific Document Version
+Fetch a specific version of a document:
+
 ```typescript
 const documentVersion = await document.version("X.Y.Z");
 ```
-### Document properties
+
+### Create a Document
+Steps to create a new document within a domain:
+
 ```typescript
-document.path
-document.versionNumber
-document.data
-document.createdAt
-document.updatedAt
+const data = YOUR_AWESOME_JSON_DATA;  // JSON data for the document
+const templates = ["template_path"];  // Optional array of template paths
+
+const newDocument = await ctx.createDocument("document_path", data, templates, false);
 ```
 
-### Creating a document in a domain
-Steps to create a new document under a domain:
-1. Create a data object.
+### Update a Document
+Update an existing document:
+
 ```typescript
-const data: any = YOUR_AWESOME_JSON_DATA;
-const templates: string[] = ["template_path"]; // Optional
-````
-2. Create a new document under the domain:
-```typescript
-const newDocument = await domain.createDocument("document_path", data, templates);
+const updatedData = YOUR_UPDATED_AWESOME_JSON_DATA;  // Updated JSON data
+const templatesToInstall = ["template_path"];  // Optional array of templates
+const versionNumber = "X.Y.Z";  // Optional specific version
+
+await document.update(updatedData, templatesToInstall, versionNumber);
 ```
-### Adding a template to a document
-Adding a template to a document:
+
+### Creating Templates
+
+### Define a JSON Schema for a Template
+Create a JSON schema directly or from a TypeScript interface:
+
 ```typescript
-await document.addTemplate("template_path");
-```
-### Creating a template
-Creating a template:
-```typescript
-const myDataType = `interface User{
-    name: string;
-    age: number;
+// Direct JSON Schema definition
+const schema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {"type": "string", "description": "The name of the organization."},
+    "description": {"type": "string", "description": "A brief description of the organization."},
+    "website": {"type": "string", "description": "The URL of the organization's website.", "format": "uri"}
+  },
+  "required": ["name"],
+};
+
+// Generate JSON schema from a TypeScript interface
+const dataName = 'User';
+const myDataType = `interface ${dataName} {
+  name: string;
+  age: number;
 }`;
 const schema = generateJsonSchema(dataName, myDataType);
-const template = await domain.createTemplate("template_path", schema);
-````
-
-## Public
-### Domain
-Retrieving all Domain Information
-```typescript
-const allDomainsInfo = await ctx.public.domains();
-const allDomainsInfo = await ctx.public.domains({offset: 1, limit: 10});
-```
-### Document
-Retrieving all documents from public API
-```typescript
-const allDocuments = await ctx.public.documents();
-const allDocuments = await ctx.public.documents({offset: 1, limit: 10, name: "document_name", domain: "domain_name"});
 ```
 
-# Documentation
-For more detailed information on the Context SDK, please refer to the [official documentation](https://docs.ctx.xyz).
-# License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Create a New Template
+Use the defined schema to create a new template:
+
+```typescript
+const template = await ctx.createDocument("template_path", schema, [], true);
+```
+
+
+## Example Workflow
+
+### 1. Create a Document
+First, create a document within your Domain using some initial data.
+
+```typescript
+import { Context } from '@contextprotocol/sdk';
+
+const ctx = new Context({ apiKey: 'your_api_key_here' });
+
+async function createDocument() {
+    const data = {
+        title: "Initial Document",
+        content: "This is the initial content of the document."
+    };
+
+    const document = await ctx.createDocument("newDocumentPath", data, [], false);
+    console.log(`Document created on: ${document.path}`);
+
+    return document;
+}
+```
+
+### 2. Define and Add a Schema
+Next, define a JSON schema and use it to create a new template on your domain.
+
+```typescript
+async function createTemplate() {
+    const schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string",
+                "description": "The title of the document."
+            },
+            "content": {
+                "type": "string",
+                "description": "The content of the document."
+            }
+        },
+        "required": ["title", "content"],
+        "additionalProperties": false
+    };
+
+    const template = await ctx.createDocument("templatePath", schema, [], true);
+    console.log(`Template created on: ${template.path}`);
+
+    return template;
+}
+```
+
+### 3. Update the Document
+Finally, update the previously created document with new data and apply the newly created template.
+
+```typescript
+async function updateDocument(documentPath, templatePath) {
+    const updatedData = {
+        title: "Updated Document",
+        content: "This is the updated content of the document."
+    };
+    const templatesToInstall = [templatePath];  // Use the path of the newly created template
+
+    const doc = await ctx.document(documentPath)
+    const updatedDoc = await doc.update(updatedData, templatesToInstall);
+    console.log("Document updated successfully.");
+}
+```
+
+## Documentation
+For more detailed information, visit the [official Context SDK documentation](https://docs.ctx.xyz).
+
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

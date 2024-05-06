@@ -1,7 +1,6 @@
 import { ContextConfig } from "../../utils/ContextConfig";
 import { Document } from "../documents/Document";
 import * as doclib from "../documents/index";
-import { TCreateDocumentWithVersion } from "../documents/types";
 import { TDomain } from "./types";
 
 export class Domain {
@@ -52,17 +51,23 @@ export class Domain {
     return new Document(tDocument);
   };
 
-  createDocument = async (path: string, data: any, templates: string[] = []) => {
-
-    const versionIds = await Promise.all(templates.map(async (template) => {
-      const document = await doclib.getDocument(
-        false,
-        `${template}`,
-        this.#contextConfig.apiKey,
-        this.#contextConfig.config,
-      );
-      return document.version._id;
-    }));
+  createDocument = async (
+    path: string,
+    data: any,
+    templates: string[] = [],
+    isTemplate = false,
+  ) => {
+    const versionIds = await Promise.all(
+      templates.map(async (template) => {
+        const document = await doclib.getDocument(
+          false,
+          `${template}`,
+          this.#contextConfig.apiKey,
+          this.#contextConfig.config,
+        );
+        return document.version._id;
+      }),
+    );
 
     const tDocument = await doclib.createDocument(
       `${path}`,
@@ -70,19 +75,9 @@ export class Domain {
       versionIds,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
+      isTemplate,
     );
+
     return new Document(tDocument);
   };
-
-  createTemplate = async (path: string, data: any) => {
-    const tDocument = await doclib.createDocument(
-      `${path}`,
-      data,
-      [],
-      this.#contextConfig.apiKey,
-      this.#contextConfig.config,
-        true
-    );
-    return new Document(tDocument);
-  }
 }

@@ -13,8 +13,20 @@ export class Document {
     this.#contextConfig = ContextConfig.getInstance();
   }
 
+  toJSON() {
+    return {
+      path: this.path,
+      versionNumber: this.versionNumber,
+      data: this.data,
+      templates: this.templates,
+      txId: this.txId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    };
+  }
+
   get path() {
-    return this.#document.path;
+    return `${this.#document.domainId.name}/${this.#document.path}`;
   }
   get versionNumber() {
     return this.#document.version.versionNumber;
@@ -24,7 +36,16 @@ export class Document {
     return this.#document.version.data;
   }
   get templates() {
-    return this.#document.version.templates;
+    const templateNamesWithVersions = this.#document.version.templates.map(doc => {
+      const domainName = doc.documentId.domainId.name;
+      const path = doc.documentId.path;
+      const version = doc.versionNumber;
+      return `${domainName}/${path}?v=${version}`;
+    });
+    return templateNamesWithVersions;
+  }
+  get txId() {
+    return this.#document.version.txId;
   }
   get createdAt() {
     return this.#document.createdAt;
@@ -37,7 +58,7 @@ export class Document {
     versionFilter?: TDocumentVersionFilter,
   ): Promise<TAllVersionsResponse> {
     return versionlib.getVersions(
-      `${this.#document.domainId.name}/${this.path}`,
+      `${this.path}`,
       versionFilter || {},
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
@@ -47,10 +68,22 @@ export class Document {
   async getVersion(versionNumber: string, publicEndpoint = false) {
     const tDoc = await documentlib.getDocument(
       publicEndpoint,
-      `${this.#document.domainId.name}/${this.path}?versionNumber=${versionNumber}`,
+      `${this.path}?versionNumber=${versionNumber}`,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
     return new Document(tDoc);
+  }
+
+  async update(data: any, templates: string[] = [], versionNumber?: string) {
+    const version = await documentlib.updateDocument(
+      `${this.path}`,
+      data,
+      templates,
+      versionNumber,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
+    );
+    return new Document(version);
   }
 }
