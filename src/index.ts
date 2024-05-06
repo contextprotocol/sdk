@@ -93,6 +93,50 @@ export class Context {
     };
   };
 
+  document = async (
+    path: string,
+  ): Promise<Document> => {
+    await this._checkIfSDKIsInitialized();
+
+    const documentResponse = await lib.getDocument(
+      false,
+      path,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+    );
+    return new Document(documentResponse as TDocument);
+  };
+
+  createDocument = async (
+    path: string,
+    data: any,
+    templates: string[] = [],
+    isTemplate = false,
+  ) => {
+    const versionIds = await Promise.all(
+      templates.map(async (template) => {
+        const document = await lib.getDocument(
+          false,
+          `${template}`,
+          this._contextConfig.apiKey,
+          this._contextConfig.config,
+        );
+        return document.version._id;
+      }),
+    );
+
+    const tDocument = await lib.createDocument(
+      `${path}`,
+      data,
+      versionIds,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+      isTemplate,
+    );
+
+    return new Document(tDocument);
+  }
+
   private _publicDomains = async (
     domainFilter?: TDomainFilter,
   ): Promise<TAllDomainsResponse> => {

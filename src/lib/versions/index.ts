@@ -20,8 +20,6 @@ export const getVersions = async (
     return {
       versions: response.data.versions,
       total: response.data.total,
-      limit: response.data.limit,
-      offset: response.data.offset,
     } as TAllVersionsResponse;
   } catch (error) {
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
