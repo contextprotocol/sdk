@@ -212,6 +212,12 @@ async function updateDocument(documentPath, templatePath) {
 }
 ```
 
+## Uploading Assets
+```typescript
+const filePath = "file/path.jpg";
+const asset = await context.uploadAsset(filePath);
+```
+
 ## Documentation
 For more detailed information, visit the [official Context SDK documentation](https://docs.ctx.xyz).
 
