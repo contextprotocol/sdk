@@ -212,10 +212,11 @@ async function updateDocument(documentPath, templatePath) {
 }
 ```
 
-## Uploading Assets
+## Creating Asset Documents
 ```typescript
-const filePath = "file/path.jpg";
-const asset = await context.uploadAsset(filePath);
+const ctxDocumentPath = "document/path";
+const localFilePath = "file/path.jpg";
+const asset = await myDomain.createAsset(ctxDocumentPath, localFilePath, metadata /* optional */);
 ```
 
 ## Documentation
