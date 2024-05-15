@@ -2,6 +2,8 @@ import { ContextConfig } from "../../utils/ContextConfig";
 import { Document } from "../documents/Document";
 import * as doclib from "../documents/index";
 import { TDomain } from "./types";
+import * as lib from "../index";
+import {TMetadata} from "../versions/type";
 
 export class Domain {
   readonly #domain: TDomain;
@@ -80,4 +82,22 @@ export class Domain {
 
     return new Document(tDocument);
   };
+
+  createAsset = async (
+      documentPath: string,
+      readme: string,
+      filePath: string,
+      metadata?: TMetadata
+  ): Promise<Document> => {
+    const asset = await lib.uploadAsset(
+        documentPath,
+        readme,
+        filePath,
+        metadata,
+        this.#contextConfig.apiKey,
+        this.#contextConfig.config,
+    );
+    console.log(`Asset: ${JSON.stringify(asset)}`)
+    return new Document(asset.asset.document);
+  }
 }

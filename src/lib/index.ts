@@ -6,18 +6,24 @@ import {Config} from "./types";
 import {getHttpHeaders} from "../utils/getHttpHeader";
 import {ContextError, ContextErrorReason} from "../utils/ContextError";
 import {getHttpErrorMessage} from "../utils/getHttpErrorMessage";
+import {TDocument} from "./documents/types";
+import {TVersion} from "./versions/type";
 
 export { getAllDocuments, getDocument, createDocument } from "./documents";
 export { getAllDomains, getDomain } from "./domains";
 export const uploadAsset = async (
+    path: string,
+    readme: string,
     filePath: string,
+    metadata: any,
     apiKey: string,
     config: Config,
-): Promise<{docId:string; cost: number; kilobytes: number;}> => {
+): Promise< {asset: { document: TDocument; version: TVersion }}| null> => {
     const url = `${config.url}/assets`;
 
     const formData = new FormData();
     formData.append("file", await fileFromPath(filePath));
+    formData.append("body", JSON.stringify({ readme, path, metadata }));
 
     try {
         const response = await axios.post(url, formData, {
@@ -29,6 +35,8 @@ export const uploadAsset = async (
         if (response.status === 403) {
             throw new ContextError(ContextErrorReason.AuthError);
         }
+
+        console.log(`Response: ${JSON.stringify(response.data)}`);
 
         return response.data;
     }

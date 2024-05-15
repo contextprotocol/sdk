@@ -137,21 +137,6 @@ export class Context {
     return new Document(tDocument);
   }
 
-  uploadAsset = async (
-      path: string,
-  ): Promise<{
-    docId: string;
-    cost: number;
-    kilobytes: number;
-  }> => {
-    await this._checkIfSDKIsInitialized();
-    return lib.uploadAsset(
-      path,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-    );
-}
-
   private _publicDomains = async (
     domainFilter?: TDomainFilter,
   ): Promise<TAllDomainsResponse> => {

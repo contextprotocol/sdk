@@ -9,6 +9,7 @@ export class Document {
   readonly #contextConfig: ContextConfig;
 
   constructor(document: TDocument) {
+    console.log(`document: ${document}`);
     this.#document = document;
     this.#contextConfig = ContextConfig.getInstance();
   }
