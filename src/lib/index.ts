@@ -13,7 +13,6 @@ export { getAllDocuments, getDocument, createDocument } from "./documents";
 export { getAllDomains, getDomain } from "./domains";
 export const uploadAsset = async (
     path: string,
-    readme: string,
     filePath: string,
     metadata: any,
     apiKey: string,
@@ -23,7 +22,7 @@ export const uploadAsset = async (
 
     const formData = new FormData();
     formData.append("file", await fileFromPath(filePath));
-    formData.append("body", JSON.stringify({ readme, path, metadata }));
+    formData.append("body", JSON.stringify({ path, metadata }));
 
     try {
         const response = await axios.post(url, formData, {

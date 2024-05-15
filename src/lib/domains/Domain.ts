@@ -85,19 +85,16 @@ export class Domain {
 
   createAsset = async (
       documentPath: string,
-      readme: string,
       filePath: string,
       metadata?: TMetadata
   ): Promise<Document> => {
     const asset = await lib.uploadAsset(
         documentPath,
-        readme,
         filePath,
         metadata,
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
     );
-    console.log(`Asset: ${JSON.stringify(asset)}`)
     return new Document(asset.asset.document);
   }
 }
