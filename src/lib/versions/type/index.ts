@@ -18,6 +18,10 @@ export type TDocumentVersionFilter = {
   limit?: number;
 };
 
+export type TMetadata = {
+    [key: string]: string;
+}
+
 export type TVersion = TTimestamps & {
   _id: string;
   documentId: string | TDocument;
@@ -30,4 +34,5 @@ export type TVersion = TTimestamps & {
   minor: number;
   patch: number;
   versionNumber: string;
+  metadata?: TMetadata;
 };
