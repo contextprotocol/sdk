@@ -142,6 +142,13 @@ Use the defined schema to create a new template:
 const template = await ctx.createDocument("template_path", schema, [], true);
 ```
 
+## Uploading Assets
+```typescript
+const ctxDocumentPath = "document/path";
+const localFilePath = "file/path.jpg";
+const asset = await myDomain.createAsset(ctxDocumentPath, localFilePath, metadata /* optional */);
+```
+
 
 ## Example Workflow
 
@@ -212,12 +219,6 @@ async function updateDocument(documentPath, templatePath) {
 }
 ```
 
-## Creating Asset Documents
-```typescript
-const ctxDocumentPath = "document/path";
-const localFilePath = "file/path.jpg";
-const asset = await myDomain.createAsset(ctxDocumentPath, localFilePath, metadata /* optional */);
-```
 
 ## Documentation
 For more detailed information, visit the [official Context SDK documentation](https://docs.ctx.xyz).
