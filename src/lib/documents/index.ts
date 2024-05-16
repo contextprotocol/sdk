@@ -131,25 +131,3 @@ export const updateDocument = async (
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
   }
 };
-
-export const addTemplate = async (
-  path: string,
-  template: string,
-  apiKey: string,
-  config: Config,
-): Promise<TDocument> => {
-  const url = `${config.url}/documents/add-template/${path}`;
-  try {
-    const response = await axios.post(
-      url,
-      { template },
-      {
-        headers: getHttpHeaders(apiKey),
-      },
-    );
-    return response.data.document;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
-};
-

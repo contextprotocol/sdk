@@ -11,6 +11,7 @@ import {TVersion} from "./versions/type";
 
 export { getAllDocuments, getDocument, createDocument } from "./documents";
 export { getAllDomains, getDomain } from "./domains";
+
 export const uploadAsset = async (
     path: string,
     filePath: string,

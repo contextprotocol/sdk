@@ -14,6 +14,7 @@ import {
 import { Config } from "./lib/types";
 import { ContextConfig } from "./utils/ContextConfig";
 import { ContextError, ContextErrorReason } from "./utils/ContextError";
+import {TMetadata} from "./lib/versions/type";
 
 export class Context {
   private _contextConfig: ContextConfig;
@@ -135,6 +136,21 @@ export class Context {
     );
 
     return new Document(tDocument);
+  }
+
+  createAsset = async (
+    documentPath: string,
+    filePath: string,
+    metadata?: TMetadata
+  ): Promise<Document> => {
+    const asset = await lib.uploadAsset(
+        documentPath,
+        filePath,
+        metadata,
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+    );
+    return new Document(asset.asset.document);
   }
 
   private _publicDomains = async (
