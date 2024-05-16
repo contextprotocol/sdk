@@ -3,6 +3,12 @@ import { TTimestamps } from "../../types";
 import { TVersion } from "../../versions/type";
 import { Document } from "../Document";
 
+export enum DocumentType {
+  Document = 'Document',
+  Template = 'Template',
+  Asset = 'Asset',
+}
+
 export type TDocument = TTimestamps & {
   _id: string;
   topDocument: string;
@@ -12,6 +18,7 @@ export type TDocument = TTimestamps & {
   isTemplate: boolean;
   versionNumber: string;
   version: TVersion;
+  type: DocumentType;
 };
 
 export type TDocumentFilter = {
@@ -19,6 +26,7 @@ export type TDocumentFilter = {
   limit?: number;
   name?: string;
   domain?: string;
+  template?: boolean;
 };
 
 export type TAllDocumentsResponse = {

@@ -1,14 +1,14 @@
 import axios from "axios";
 
+import { ContextError, ContextErrorReason } from "../../utils/ContextError";
 import { getHttpErrorMessage } from "../../utils/getHttpErrorMessage";
 import { getHttpHeaders } from "../../utils/getHttpHeader";
-import { Config } from "../types";
 import {
-  TAllDocumentsResponse,
-  TDocument,
-  TDocumentFilter,
-} from "./types";
-import {extractPathAndVersionNumber, transformVersionNumberToObject} from "../../utils/utils";
+  extractPathAndVersionNumber,
+  transformVersionNumberToObject,
+} from "../../utils/utils";
+import { Config } from "../types";
+import { TAllDocumentsResponse, TDocument, TDocumentFilter } from "./types";
 
 export const getAllDocuments = async (
   fromPublicEndpoint: boolean,
@@ -40,7 +40,7 @@ export const getDocument = async (
   name: string,
   apiKey: string,
   config: Config,
-): Promise<TDocument> => {
+): Promise<TDocument | null> => {
   const url = fromPublicEndpoint
     ? `${config.url}/public/documents/${name}`
     : `${config.url}/documents/${name}`;
@@ -48,6 +48,11 @@ export const getDocument = async (
     const response = await axios.get(url, {
       headers: getHttpHeaders(apiKey),
     });
+    if (response.status === 403) {
+      throw new ContextError(ContextErrorReason.AuthError);
+    } else if (response.status === 404) {
+      throw new ContextError(ContextErrorReason.DocumentNotFound);
+    }
     return response.data.document;
   } catch (error) {
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
@@ -62,48 +67,66 @@ export const createDocument = async (
   config: Config,
   isTemplate = false,
 ): Promise<TDocument> => {
-
   const url = `${config.url}/documents`;
-  const { pathOrId, versionNumber } = extractPathAndVersionNumber('', fullPath);
-  const versionFilter = transformVersionNumberToObject(versionNumber || '1.0.0');
+  const { pathOrId, versionNumber } = extractPathAndVersionNumber("", fullPath);
+  const versionFilter = transformVersionNumberToObject(
+    versionNumber || "1.0.0",
+  );
 
   const createDoc = {
     document: {
       path: pathOrId,
-        isTemplate,
+      isTemplate,
     },
     version: {
       data,
       templates,
-      ... versionFilter
-    }
-  }
+      ...versionFilter,
+    },
+  };
   try {
     const response = await axios.post(url, createDoc, {
       headers: getHttpHeaders(apiKey),
     });
+
+    if (response.status === 403) {
+      throw new ContextError(ContextErrorReason.AuthError);
+    } else if (response.status === 404) {
+      throw new ContextError(ContextErrorReason.DocumentNotFound);
+    }
+
     return response.data.document;
   } catch (error) {
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
   }
 };
 
-export const addTemplate = async (
-  path: string,
-  template: string,
+export const updateDocument = async (
+  fullPath: string,
+  data: any,
+  templates: string[],
+  versionNumber: string | undefined,
   apiKey: string,
   config: Config,
 ): Promise<TDocument> => {
-  const url = `${config.url}/documents/add-template/${path}`;
+  const url = `${config.url}/documents/${fullPath}`;
+  const updateDoc = {
+    data,
+    templates,
+    versionNumber,
+  };
   try {
-    const response = await axios.post(
-      url,
-      { template },
-      {
-        headers: getHttpHeaders(apiKey),
-      },
-    );
-    return response.data.document;
+    const response = await axios.patch(url, updateDoc, {
+      headers: getHttpHeaders(apiKey),
+    });
+
+    if (response.status === 403) {
+      throw new ContextError(ContextErrorReason.AuthError);
+    } else if (response.status === 404) {
+      throw new ContextError(ContextErrorReason.DocumentNotFound);
+    }
+
+    return response.data;
   } catch (error) {
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
   }

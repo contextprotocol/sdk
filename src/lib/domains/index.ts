@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import { ContextError, ContextErrorReason } from "../../utils/ContextError";
 import { getHttpErrorMessage } from "../../utils/getHttpErrorMessage";
 import { getHttpHeaders } from "../../utils/getHttpHeader";
 import { Config } from "../types";
@@ -43,6 +44,11 @@ export const getDomain = async (
     const response = await axios.get(url, {
       headers: getHttpHeaders(apiKey),
     });
+    if (response.status === 403) {
+      throw new ContextError(ContextErrorReason.AuthError);
+    } else if (response.status === 404) {
+      throw new ContextError(ContextErrorReason.DomainNotFound);
+    }
     return response.data.domain;
   } catch (error) {
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
