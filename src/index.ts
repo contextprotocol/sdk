@@ -111,28 +111,59 @@ export class Context {
   createDocument = async (
     path: string,
     data: any,
-    templates: string[] = [],
-    isTemplate = false,
+    templates: string[] = []
   ) => {
-    const versionIds = await Promise.all(
-      templates.map(async (template) => {
-        const document = await lib.getDocument(
-          false,
-          `${template}`,
+    return this._createDocument(path, data, templates, false);
+  }
+
+  createTemplate = async (
+      path: string,
+      data: any,
+      templates: string[] = []
+  ) => {
+    return this._createDocument(path, data, templates, true);
+  }
+
+  createAsset = async (
+      documentPath: string,
+      filePath: string,
+      metadata?: TMetadata
+  ): Promise<Document> => {
+      const asset = await lib.uploadAsset(
+          documentPath,
+          filePath,
+          metadata,
           this._contextConfig.apiKey,
           this._contextConfig.config,
-        );
-        return document.version._id;
-      }),
+      );
+      return new Document(asset.asset.document);
+  }
+
+  private _createDocument = async (
+      path: string,
+      data: any,
+      templates: string[] = [],
+      isTemplate
+  )=>{
+    const versionIds = await Promise.all(
+        templates.map(async (template) => {
+          const document = await lib.getDocument(
+              false,
+              `${template}`,
+              this._contextConfig.apiKey,
+              this._contextConfig.config,
+          );
+          return document.version._id;
+        }),
     );
 
     const tDocument = await lib.createDocument(
-      `${path}`,
-      data,
-      versionIds,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-      isTemplate,
+        `${path}`,
+        data,
+        versionIds,
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+        isTemplate,
     );
 
     return new Document(tDocument);

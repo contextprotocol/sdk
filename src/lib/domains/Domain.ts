@@ -54,34 +54,20 @@ export class Domain {
   };
 
   createDocument = async (
-    path: string,
-    data: any,
-    templates: string[] = [],
-    isTemplate = false,
+      path: string,
+      data: any,
+      templates: string[] = [],
   ) => {
-    const versionIds = await Promise.all(
-      templates.map(async (template) => {
-        const document = await doclib.getDocument(
-          false,
-          `${template}`,
-          this.#contextConfig.apiKey,
-          this.#contextConfig.config,
-        );
-        return document.version._id;
-      }),
-    );
+    return this._createDocument(path, data, templates, false);
+  }
 
-    const tDocument = await doclib.createDocument(
-      `${path}`,
-      data,
-      versionIds,
-      this.#contextConfig.apiKey,
-      this.#contextConfig.config,
-      isTemplate,
-    );
-
-    return new Document(tDocument);
-  };
+  createTemplate = async (
+      path: string,
+      data: any,
+      templates: string[] = [],
+  ) => {
+    return this._createDocument(path, data, templates, true);
+  }
 
   createAsset = async (
       documentPath: string,
@@ -97,4 +83,34 @@ export class Domain {
     );
     return new Document(asset.asset.document);
   }
+
+  private _createDocument = async (
+      path: string,
+      data: any,
+      templates: string[] = [],
+      isTemplate = false,
+  ) => {
+    const versionIds = await Promise.all(
+        templates.map(async (template) => {
+          const document = await doclib.getDocument(
+              false,
+              `${template}`,
+              this.#contextConfig.apiKey,
+              this.#contextConfig.config,
+          );
+          return document.version._id;
+        }),
+    );
+
+    const tDocument = await doclib.createDocument(
+        `${path}`,
+        data,
+        versionIds,
+        this.#contextConfig.apiKey,
+        this.#contextConfig.config,
+        isTemplate,
+    );
+
+    return new Document(tDocument);
+  };
 }

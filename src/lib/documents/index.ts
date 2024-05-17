@@ -9,6 +9,9 @@ import {
 } from "../../utils/utils";
 import { Config } from "../types";
 import { TAllDocumentsResponse, TDocument, TDocumentFilter } from "./types";
+import {TMetadata, TVersion} from "../versions/type";
+import {FormData} from "formdata-node";
+import {fileFromPath} from "formdata-node/lib/file-from-path";
 
 export const getAllDocuments = async (
   fromPublicEndpoint: boolean,
@@ -131,3 +134,53 @@ export const updateDocument = async (
     throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
   }
 };
+
+export const updateMetadata = async (
+    path: string,
+    metadata: TMetadata,
+    apiKey: string,
+    config: Config,
+    versionNumber?: string,
+): Promise<TDocument> => {
+  const url = `${config.url}/documents/metadata/${path}`;
+  try {
+    const response = await axios.patch(url, { metadata, versionNumber }, {
+      headers: getHttpHeaders(apiKey),
+    });
+    return response.data.document;
+  } catch (error) {
+    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
+  }
+};
+
+export const updateAsset = async (
+    path: string,
+    filePath: string,
+    metadata: TMetadata,
+    apiKey: string,
+    config: Config,
+): Promise< {asset: { document: TDocument; version: TVersion }}| null> => {
+  const url = `${config.url}/assets/${path}`;
+
+  const formData = new FormData();
+  formData.append("file", await fileFromPath(filePath));
+  formData.append("body", JSON.stringify({ metadata }));
+
+  try {
+    const response = await axios.patch(url, formData, {
+      headers: {
+        ...getHttpHeaders(apiKey),
+      },
+    });
+
+    if (response.status === 403) {
+      throw new ContextError(ContextErrorReason.AuthError);
+    }
+
+    return response.data;
+  }
+  catch (error) {
+    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
+  }
+}
+

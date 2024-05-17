@@ -7,7 +7,7 @@ import {getHttpHeaders} from "../utils/getHttpHeader";
 import {ContextError, ContextErrorReason} from "../utils/ContextError";
 import {getHttpErrorMessage} from "../utils/getHttpErrorMessage";
 import {TDocument} from "./documents/types";
-import {TVersion} from "./versions/type";
+import {TMetadata, TVersion} from "./versions/type";
 
 export { getAllDocuments, getDocument, createDocument } from "./documents";
 export { getAllDomains, getDomain } from "./domains";
@@ -15,7 +15,7 @@ export { getAllDomains, getDomain } from "./domains";
 export const uploadAsset = async (
     path: string,
     filePath: string,
-    metadata: any,
+    metadata: TMetadata,
     apiKey: string,
     config: Config,
 ): Promise< {asset: { document: TDocument; version: TVersion }}| null> => {
@@ -35,8 +35,6 @@ export const uploadAsset = async (
         if (response.status === 403) {
             throw new ContextError(ContextErrorReason.AuthError);
         }
-
-        console.log(`Response: ${JSON.stringify(response.data)}`);
 
         return response.data;
     }
