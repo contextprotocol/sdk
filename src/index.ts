@@ -169,21 +169,6 @@ export class Context {
     return new Document(tDocument);
   }
 
-  createAsset = async (
-    documentPath: string,
-    filePath: string,
-    metadata?: TMetadata
-  ): Promise<Document> => {
-    const asset = await lib.uploadAsset(
-        documentPath,
-        filePath,
-        metadata,
-        this._contextConfig.apiKey,
-        this._contextConfig.config,
-    );
-    return new Document(asset.asset.document);
-  }
-
   private _publicDomains = async (
     domainFilter?: TDomainFilter,
   ): Promise<TAllDomainsResponse> => {
