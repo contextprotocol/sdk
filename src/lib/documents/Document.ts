@@ -133,6 +133,8 @@ export class Document {
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
+
+    console.log(JSON.stringify(asset));
     return new Document(asset.asset.document);
   }
 }

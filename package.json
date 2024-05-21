@@ -19,7 +19,8 @@
     "lint": "eslint --ignore-path .gitignore . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write '*/**/*.{js,json,md,ts}'",
-    "format:check": "prettier --check '*/**/*.{js,json,md,ts}'"
+    "format:check": "prettier --check '*/**/*.{js,json,md,ts}'",
+    "build:types": "tsc -d --declarationDir dist/ --declarationMap --emitDeclarationOnly"
   },
   "author": "",
   "license": "MIT",

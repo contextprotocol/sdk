@@ -4,9 +4,9 @@ import { TVersion } from "../../versions/type";
 import { Document } from "../Document";
 
 export enum DocumentType {
-  Document = 'Document',
-  Template = 'Template',
-  Asset = 'Asset',
+  Document = 'document',
+  Template = 'template',
+  Asset = 'asset',
 }
 
 export type TDocument = TTimestamps & {

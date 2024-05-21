@@ -11,7 +11,7 @@ import { Config } from "../types";
 import { TAllDocumentsResponse, TDocument, TDocumentFilter } from "./types";
 import {TMetadata, TVersion} from "../versions/type";
 import {FormData} from "formdata-node";
-import {fileFromPath} from "formdata-node/lib/file-from-path";
+import {fileFromPath} from "formdata-node/file-from-path";
 
 export const getAllDocuments = async (
   fromPublicEndpoint: boolean,
