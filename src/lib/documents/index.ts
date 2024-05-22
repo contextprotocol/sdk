@@ -160,15 +160,17 @@ export const updateMetadata = async (
 export const updateAsset = async (
   path: string,
   filePath: string,
-  metadata: TMetadata,
+  metadata: TMetadata | undefined,
+  versionNumber: string | undefined,
   apiKey: string,
   config: Config,
 ): Promise<{ asset: { document: TDocument; version: TVersion } } | null> => {
   const url = `${config.url}/assets/${path}`;
 
+  const body = versionNumber ? { metadata, versionNumber } : { metadata };
   const formData = new FormData();
   formData.append("file", await fileFromPath(filePath));
-  formData.append("body", JSON.stringify({ metadata }));
+  formData.append("body", JSON.stringify(body));
 
   try {
     const response = await axios.patch(url, formData, {

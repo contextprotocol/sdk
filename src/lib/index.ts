@@ -15,7 +15,7 @@ export { getAllDomains, getDomain } from "./domains";
 export const uploadAsset = async (
   path: string,
   filePath: string,
-  metadata: TMetadata | null,
+  metadata: TMetadata | undefined,
   apiKey: string,
   config: Config,
 ): Promise<{ asset: { document: TDocument; version: TVersion } } | null> => {

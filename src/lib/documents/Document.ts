@@ -85,13 +85,16 @@ export class Document {
     );
   }
 
-  async getVersion(versionNumber: string, publicEndpoint = false) {
+  async getVersion(versionNumber: string, publicEndpoint = false): Promise<Document | undefined> {
     const tDoc = await documentlib.getDocument(
       publicEndpoint,
       `${this.path}?versionNumber=${versionNumber}`,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
+    if (!tDoc) {
+      return undefined;
+    }
     return new Document(tDoc);
   }
 
@@ -128,7 +131,11 @@ export class Document {
     return new Document(tDocument);
   }
 
-  async updateAsset(filePath: string, metadata?: TMetadata) {
+  async updateAsset(
+    filePath: string,
+    metadata?: TMetadata,
+    newVesionNumber?: string,
+  ) {
     if (this.#document.type !== DocumentType.Asset) {
       throw new Error("Document is not an asset");
     }
@@ -136,10 +143,11 @@ export class Document {
       `${this.path}`,
       filePath,
       metadata,
+      newVesionNumber,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
 
-    return new Document(asset.asset.document);
+    return new Document(asset!.asset.document);
   }
 }

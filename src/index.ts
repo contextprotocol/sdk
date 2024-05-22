@@ -58,7 +58,7 @@ export class Context {
     };
   };
 
-  domain = async (name?: string): Promise<Domain | null> => {
+  domain = async (name?: string): Promise<Domain | undefined> => {
     await this._checkIfSDKIsInitialized();
 
     if (!name) {
@@ -71,7 +71,7 @@ export class Context {
       this._contextConfig.apiKey,
       this._contextConfig.config,
     );
-    if (!tDomain) return null;
+    if (!tDomain) return undefined;
     return new Domain(tDomain);
   };
 
@@ -134,7 +134,7 @@ export class Context {
       this._contextConfig.apiKey,
       this._contextConfig.config,
     );
-    return new Document(asset.asset.document);
+    return new Document(asset!.asset.document);
   };
 
   private _createDocument = async (
@@ -151,7 +151,7 @@ export class Context {
           this._contextConfig.apiKey,
           this._contextConfig.config,
         );
-        return document.version._id;
+        return document!.version._id;
       }),
     );
 
@@ -184,7 +184,7 @@ export class Context {
     };
   };
 
-  private _publicDomain = async (name: string): Promise<Domain> => {
+  private _publicDomain = async (name: string): Promise<Domain | undefined> => {
     await this._checkIfSDKIsInitialized();
 
     let tDomain;
@@ -200,7 +200,7 @@ export class Context {
         const contextError = e;
         switch (contextError.reason) {
           case ContextErrorReason.DomainNotFound:
-            return null;
+            return undefined;
           default:
             break;
         }

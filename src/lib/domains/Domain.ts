@@ -49,7 +49,9 @@ export class Domain {
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
-
+    if (!tDocument) {
+        return null;
+    }
     return new Document(tDocument);
   };
 
@@ -81,7 +83,7 @@ export class Domain {
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
-    return new Document(asset.asset.document);
+    return new Document(asset!.asset.document);
   };
 
   private _createDocument = async (
@@ -98,7 +100,7 @@ export class Domain {
           this.#contextConfig.apiKey,
           this.#contextConfig.config,
         );
-        return document.version._id;
+        return document!.version._id;
       }),
     );
 
