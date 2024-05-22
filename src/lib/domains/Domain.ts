@@ -3,7 +3,7 @@ import { Document } from "../documents/Document";
 import * as doclib from "../documents/index";
 import { TDomain } from "./types";
 import * as lib from "../index";
-import {TMetadata} from "../versions/type";
+import { TMetadata } from "../versions/type";
 
 export class Domain {
   readonly #domain: TDomain;
@@ -49,11 +49,44 @@ export class Domain {
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
-
+    if (!tDocument) {
+        return null;
+    }
     return new Document(tDocument);
   };
 
   createDocument = async (
+    path: string,
+    data: any,
+    templates: string[] = [],
+  ) => {
+    return this._createDocument(path, data, templates, false);
+  };
+
+  createTemplate = async (
+    path: string,
+    data: any,
+    templates: string[] = [],
+  ) => {
+    return this._createDocument(path, data, templates, true);
+  };
+
+  createAsset = async (
+    documentPath: string,
+    filePath: string,
+    metadata?: TMetadata,
+  ): Promise<Document> => {
+    const asset = await lib.uploadAsset(
+      documentPath,
+      filePath,
+      metadata,
+      this.#contextConfig.apiKey,
+      this.#contextConfig.config,
+    );
+    return new Document(asset!.asset.document);
+  };
+
+  private _createDocument = async (
     path: string,
     data: any,
     templates: string[] = [],
@@ -67,7 +100,7 @@ export class Domain {
           this.#contextConfig.apiKey,
           this.#contextConfig.config,
         );
-        return document.version._id;
+        return document!.version._id;
       }),
     );
 
@@ -82,19 +115,4 @@ export class Domain {
 
     return new Document(tDocument);
   };
-
-  createAsset = async (
-      documentPath: string,
-      filePath: string,
-      metadata?: TMetadata
-  ): Promise<Document> => {
-    const asset = await lib.uploadAsset(
-        documentPath,
-        filePath,
-        metadata,
-        this.#contextConfig.apiKey,
-        this.#contextConfig.config,
-    );
-    return new Document(asset.asset.document);
-  }
 }

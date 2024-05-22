@@ -94,7 +94,7 @@ Steps to create a new document within a domain:
 const data = YOUR_AWESOME_JSON_DATA;  // JSON data for the document
 const templates = ["template_path"];  // Optional array of template paths
 
-const newDocument = await ctx.createDocument("document_path", data, templates, false);
+const newDocument = await ctx.createDocument("document_path", data, templates);
 ```
 
 ### Update a Document
@@ -106,6 +106,14 @@ const templatesToInstall = ["template_path"];  // Optional array of templates
 const versionNumber = "X.Y.Z";  // Optional specific version
 
 await document.update(updatedData, templatesToInstall, versionNumber);
+```
+
+### Adding metadata to a Document
+You can add metadata to a document using the `addMetadata` method. The metadata object should contain the following (optional) fields: `name`, `description`, and `readme` as shown below
+
+```typescript
+const metadata = { name: "Document Name", description: "Document Description", readme: "Document Readme as markdown" };
+await document.addMetadata(metadata);
 ```
 
 ### Creating Templates
@@ -139,16 +147,25 @@ const schema = generateJsonSchema(dataName, myDataType);
 Use the defined schema to create a new template:
 
 ```typescript
-const template = await ctx.createDocument("template_path", schema, [], true);
+const template = await ctx.createTemplate("template_path", schema, []);
 ```
 
-## Uploading Assets
+## Assets
+As a user, you can upload assets to your domain. When uploading an asset, you can specify the document path where the asset will be stored.
 ```typescript
 const ctxDocumentPath = "document/path";
 const localFilePath = "file/path.jpg";
 const asset = await myDomain.createAsset(ctxDocumentPath, localFilePath, metadata /* optional */);
 ```
 
+### Updating an Asset
+You can update an existing asset by providing the document path and the local file path of the updated asset. 
+it returns a document with a new version.
+```typescript
+const localFilePath = "file/path.jpg";
+const metadata = { name: "Updated Asset", description: "New description" };
+const asset = await ctxDocument.updateAsset(localFilePath, metadata /* optional */);
+```
 
 ## Example Workflow
 
@@ -195,7 +212,7 @@ async function createTemplate() {
         "additionalProperties": false
     };
 
-    const template = await ctx.createDocument("templatePath", schema, [], true);
+    const template = await ctx.createTemplate("templatePath", schema, []);
     console.log(`Template created on: ${template.path}`);
 
     return template;
