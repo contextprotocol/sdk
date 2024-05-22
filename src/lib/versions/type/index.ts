@@ -22,9 +22,9 @@ type MetadataKeys = {
   name?: string;
   description?: string;
   readme?: string;
-}
+};
 
-export type TMetadata = Partial<MetadataKeys>
+export type TMetadata = Partial<MetadataKeys>;
 
 export type TVersion = TTimestamps & {
   _id: string;

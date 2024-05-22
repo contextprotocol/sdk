@@ -4,7 +4,8 @@
   "description": "Context Protocol SDK",
   "main": "dist/index.js",
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "dist/**/*.d.ts"
   ],
   "repository": {
     "type": "git",
@@ -15,12 +16,13 @@
     "npm": ">=9.x"
   },
   "scripts": {
+    "release": "npm run format && npm run build && npm run generate:types",
     "build": "rm -rf dist && npx tsc",
     "lint": "eslint --ignore-path .gitignore . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write '*/**/*.{js,json,md,ts}'",
     "format:check": "prettier --check '*/**/*.{js,json,md,ts}'",
-    "build:types": "tsc -d --declarationDir dist/ --declarationMap --emitDeclarationOnly"
+    "generate:types": "tsc --emitDeclarationOnly --declaration --outDir dist"
   },
   "author": "",
   "license": "MIT",

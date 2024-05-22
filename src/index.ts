@@ -14,7 +14,7 @@ import {
 import { Config } from "./lib/types";
 import { ContextConfig } from "./utils/ContextConfig";
 import { ContextError, ContextErrorReason } from "./utils/ContextError";
-import {TMetadata} from "./lib/versions/type";
+import { TMetadata } from "./lib/versions/type";
 
 export class Context {
   private _contextConfig: ContextConfig;
@@ -94,9 +94,7 @@ export class Context {
     };
   };
 
-  document = async (
-    path: string,
-  ): Promise<Document> => {
+  document = async (path: string): Promise<Document> => {
     await this._checkIfSDKIsInitialized();
 
     const documentResponse = await lib.getDocument(
@@ -111,63 +109,63 @@ export class Context {
   createDocument = async (
     path: string,
     data: any,
-    templates: string[] = []
+    templates: string[] = [],
   ) => {
     return this._createDocument(path, data, templates, false);
-  }
+  };
 
   createTemplate = async (
-      path: string,
-      data: any,
-      templates: string[] = []
+    path: string,
+    data: any,
+    templates: string[] = [],
   ) => {
     return this._createDocument(path, data, templates, true);
-  }
+  };
 
   createAsset = async (
-      documentPath: string,
-      filePath: string,
-      metadata?: TMetadata
+    documentPath: string,
+    filePath: string,
+    metadata?: TMetadata,
   ): Promise<Document> => {
-      const asset = await lib.uploadAsset(
-          documentPath,
-          filePath,
-          metadata,
-          this._contextConfig.apiKey,
-          this._contextConfig.config,
-      );
-      return new Document(asset.asset.document);
-  }
+    const asset = await lib.uploadAsset(
+      documentPath,
+      filePath,
+      metadata,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+    );
+    return new Document(asset.asset.document);
+  };
 
   private _createDocument = async (
-      path: string,
-      data: any,
-      templates: string[] = [],
-      isTemplate
-  )=>{
+    path: string,
+    data: any,
+    templates: string[] = [],
+    isTemplate,
+  ) => {
     const versionIds = await Promise.all(
-        templates.map(async (template) => {
-          const document = await lib.getDocument(
-              false,
-              `${template}`,
-              this._contextConfig.apiKey,
-              this._contextConfig.config,
-          );
-          return document.version._id;
-        }),
+      templates.map(async (template) => {
+        const document = await lib.getDocument(
+          false,
+          `${template}`,
+          this._contextConfig.apiKey,
+          this._contextConfig.config,
+        );
+        return document.version._id;
+      }),
     );
 
     const tDocument = await lib.createDocument(
-        `${path}`,
-        data,
-        versionIds,
-        this._contextConfig.apiKey,
-        this._contextConfig.config,
-        isTemplate,
+      `${path}`,
+      data,
+      versionIds,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+      isTemplate,
     );
 
     return new Document(tDocument);
-  }
+  };
 
   private _publicDomains = async (
     domainFilter?: TDomainFilter,

@@ -1,8 +1,12 @@
-import {ContextConfig} from "../../utils/ContextConfig";
+import { ContextConfig } from "../../utils/ContextConfig";
 import * as versionlib from "../versions/index";
-import {TAllVersionsResponse, TDocumentVersionFilter, TMetadata} from "../versions/type";
+import {
+  TAllVersionsResponse,
+  TDocumentVersionFilter,
+  TMetadata,
+} from "../versions/type";
 import * as documentlib from "./index";
-import {DocumentType, TDocument} from "./types";
+import { DocumentType, TDocument } from "./types";
 
 export class Document {
   readonly #document: TDocument;
@@ -21,7 +25,7 @@ export class Document {
       templates: this.templates,
       txId: this.txId,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 
@@ -39,12 +43,14 @@ export class Document {
   }
 
   get templates() {
-    const templateNamesWithVersions = this.#document.version.templates.map(doc => {
-      const domainName = doc.documentId.domainId.name;
-      const path = doc.documentId.path;
-      const version = doc.versionNumber;
-      return `${domainName}/${path}?v=${version}`;
-    });
+    const templateNamesWithVersions = this.#document.version.templates.map(
+      (doc) => {
+        const domainName = doc.documentId.domainId.name;
+        const path = doc.documentId.path;
+        const version = doc.versionNumber;
+        return `${domainName}/${path}?v=${version}`;
+      },
+    );
     return templateNamesWithVersions;
   }
 
@@ -117,14 +123,14 @@ export class Document {
       metadata,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
-        versionNumber,
+      versionNumber,
     );
     return new Document(tDocument);
   }
 
   async updateAsset(filePath: string, metadata?: TMetadata) {
     if (this.#document.type !== DocumentType.Asset) {
-        throw new Error("Document is not an asset");
+      throw new Error("Document is not an asset");
     }
     const asset = await documentlib.updateAsset(
       `${this.path}`,
