@@ -50,7 +50,7 @@ export class Domain {
       this.#contextConfig.config,
     );
     if (!tDocument) {
-        return null;
+      return null;
     }
     return new Document(tDocument);
   };
@@ -59,16 +59,18 @@ export class Domain {
     path: string,
     data: any,
     templates: string[] = [],
+    metadata?: TMetadata,
   ) => {
-    return this._createDocument(path, data, templates, false);
+    return this._createDocument(path, data, templates, false, metadata);
   };
 
   createTemplate = async (
     path: string,
     data: any,
     templates: string[] = [],
+    metadata?: TMetadata,
   ) => {
-    return this._createDocument(path, data, templates, true);
+    return this._createDocument(path, data, templates, true, metadata);
   };
 
   createAsset = async (
@@ -91,6 +93,7 @@ export class Domain {
     data: any,
     templates: string[] = [],
     isTemplate = false,
+    metadata?: TMetadata,
   ) => {
     const versionIds = await Promise.all(
       templates.map(async (template) => {
@@ -111,6 +114,7 @@ export class Domain {
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
       isTemplate,
+      metadata,
     );
 
     return new Document(tDocument);

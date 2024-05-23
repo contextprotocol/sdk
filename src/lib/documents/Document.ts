@@ -85,7 +85,10 @@ export class Document {
     );
   }
 
-  async getVersion(versionNumber: string, publicEndpoint = false): Promise<Document | undefined> {
+  async getVersion(
+    versionNumber: string,
+    publicEndpoint = false,
+  ): Promise<Document | undefined> {
     const tDoc = await documentlib.getDocument(
       publicEndpoint,
       `${this.path}?versionNumber=${versionNumber}`,

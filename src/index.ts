@@ -110,16 +110,18 @@ export class Context {
     path: string,
     data: any,
     templates: string[] = [],
+    metadata?: TMetadata,
   ) => {
-    return this._createDocument(path, data, templates, false);
+    return this._createDocument(path, data, templates, false, metadata);
   };
 
   createTemplate = async (
     path: string,
     data: any,
     templates: string[] = [],
+    metadata?: TMetadata,
   ) => {
-    return this._createDocument(path, data, templates, true);
+    return this._createDocument(path, data, templates, true, metadata);
   };
 
   createAsset = async (
@@ -142,6 +144,7 @@ export class Context {
     data: any,
     templates: string[] = [],
     isTemplate,
+    metadata?: TMetadata,
   ) => {
     const versionIds = await Promise.all(
       templates.map(async (template) => {
@@ -162,6 +165,7 @@ export class Context {
       this._contextConfig.apiKey,
       this._contextConfig.config,
       isTemplate,
+      metadata,
     );
 
     return new Document(tDocument);

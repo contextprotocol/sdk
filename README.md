@@ -104,8 +104,9 @@ Steps to create a new document within a domain:
 ```typescript
 const data = YOUR_AWESOME_JSON_DATA;  // JSON data for the document
 const templates = ["template_path"];  // Optional array of template paths
+const metadata = { name: "Document Name", description: "Document Description", readme: "Document Readme as markdown" };  // Optional metadata
 
-const newDocument = await ctx.createDocument("document_path", data, templates);
+const newDocument = await ctx.createDocument("document_path", data, templates, metadata);
 ```
 
 ### Update a Document
@@ -160,7 +161,8 @@ const schema = generateJsonSchema(dataName, myDataType);
 Use the defined schema to create a new template:
 
 ```typescript
-const template = await ctx.createTemplate("template_path", schema, []);
+const metadata = { name: "Template Name", description: "Template Description", readme: "Markdown document" };  // Optional metadata
+const template = await ctx.createTemplate("template_path", schema, [], metadata /* optional */);
 ```
 
 
