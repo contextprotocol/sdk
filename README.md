@@ -192,7 +192,7 @@ const asset = await ctxDocument.updateAsset(localFilePath, metadata /* optional 
 Every data on Context is publicly available, free, and forever for other developers to use locally through our public gateway:
 
 ```bash
-https://rpc.ctx.xyz/contextprotocol/domain/path/to/document
+https://rpc.ctx.xyz/domain/path/to/document
 ```
 
 For more detailed information and examples, visit the [official Context SDK documentation](https://docs.ctx.xyz).
