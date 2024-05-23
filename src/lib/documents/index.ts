@@ -85,7 +85,7 @@ export const createDocument = async (
     version: {
       data,
       templates,
-        metadata,
+      metadata,
       ...versionFilter,
     },
   };

@@ -50,7 +50,7 @@ export class Domain {
       this.#contextConfig.config,
     );
     if (!tDocument) {
-        return null;
+      return null;
     }
     return new Document(tDocument);
   };
@@ -114,7 +114,7 @@ export class Domain {
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
       isTemplate,
-        metadata,
+      metadata,
     );
 
     return new Document(tDocument);
