@@ -1,15 +1,21 @@
+
 # Context SDK
-## Introduction
+
+## 🚀 Introduction
 The Context SDK is a robust and flexible toolkit designed for developers to interact programmatically with Context Protocol. It allows for efficient management of your Documents through Context's API, streamlining operations such as creation, modification, and fetching data.
 
-## Installation
+
+
+## 📥 Installation
 Install the Context SDK to your TypeScript project using npm:
 
 ```bash
 npm install @contextprotocol/sdk
 ```
 
-## Quick Start
+
+
+## ⚡ Quick Start
 This guide provides the basic steps to establish a connection and perform common operations using the Context SDK.
 
 ### Setting Up Your Connection
@@ -23,7 +29,9 @@ import { Context } from '@contextprotocol/sdk';
 const ctx = new Context({ apiKey: "your_api_key_here" }); // Replace with your API key
 ```
 
-## Working with Domains
+
+
+## 🌐 Working with Domains
 
 ### Fetch Domain Information
 Fetch details of a specific domain or the default domain associated with your API key:
@@ -37,28 +45,26 @@ const domain = await ctx.domain("domain_name");  // Returns null if not found
 ```
 
 ### Domain Properties
-Access properties of a Domain:
+Access and display properties of a domain:
 
 ```typescript
 console.log(domain.name);
 console.log(domain.documents);
-console.log(domain.owner);
+console.log(domain.status);
 console.log(domain.createdAt);
 console.log(domain.updatedAt);
 ```
 
-## Managing Documents
+
+
+## 📄 Managing Documents
 
 ### Fetch Documents
-Fetch a specific document, from any domain:
+Fetch a specific document or template, from any domain:
 
 ```typescript
 // Fetch a specific document
-const document = await ctx.document("document_path");  // Returns null if not found
-
-// Fetch a specific version of a document
-const document = await ctx.document("document_path");
-const documentInVersionXYZ = await ctx.document("document_path?v=X.Y.Z"); // Get a specific version of a document
+const document = await ctx.document("document_path");  // "domain/path/to/file"
 ```
 
 ### Document Properties
@@ -81,10 +87,15 @@ const documentVersions = await document.versions();
 ```
 
 ### Fetch a Specific Document Version
-Fetch a specific version of a document:
+You can fetch a specific version of a document in two different ways:
 
 ```typescript
+// By using the version method of the document:
+const document = await ctx.document("document_path");
 const documentVersion = await document.version("X.Y.Z");
+
+// By specifying the version directly the document path:
+const documentInVersionXYZ = await ctx.document("document_path?v=X.Y.Z");
 ```
 
 ### Create a Document
@@ -108,15 +119,17 @@ const versionNumber = "X.Y.Z";  // Optional specific version
 await document.update(updatedData, templatesToInstall, versionNumber);
 ```
 
-### Adding metadata to a Document
-You can add metadata to a document using the `addMetadata` method. The metadata object should contain the following (optional) fields: `name`, `description`, and `readme` as shown below
+### Adding Metadata to a Document
+You can add metadata to a document using the `addMetadata` method. The metadata object should contain the following (optional) fields: `name`, `description`, and `readme` as shown below:
 
 ```typescript
 const metadata = { name: "Document Name", description: "Document Description", readme: "Document Readme as markdown" };
 await document.addMetadata(metadata);
 ```
 
-### Creating Templates
+
+
+## 📐 Creating Templates
 
 ### Define a JSON Schema for a Template
 Create a JSON schema directly or from a TypeScript interface:
@@ -150,95 +163,41 @@ Use the defined schema to create a new template:
 const template = await ctx.createTemplate("template_path", schema, []);
 ```
 
-## Assets
+
+
+## 📦 Assets
+
+### Upload new Assets
 As a user, you can upload assets to your domain. When uploading an asset, you can specify the document path where the asset will be stored.
+
 ```typescript
 const ctxDocumentPath = "document/path";
 const localFilePath = "file/path.jpg";
-const asset = await myDomain.createAsset(ctxDocumentPath, localFilePath, metadata /* optional */);
+const asset = await ctx.createAsset(ctxDocumentPath, localFilePath, metadata /* optional */);
 ```
 
-### Updating an Asset
-You can update an existing asset by providing the document path and the local file path of the updated asset. 
-it returns a document with a new version.
+### Update an Asset
+You can update an existing asset by providing the document path and the local file path of the updated asset. It returns a document with a new version.
+
 ```typescript
 const localFilePath = "file/path.jpg";
 const metadata = { name: "Updated Asset", description: "New description" };
 const asset = await ctxDocument.updateAsset(localFilePath, metadata /* optional */);
 ```
 
-## Example Workflow
 
-### 1. Create a Document
-First, create a document within your Domain using some initial data.
 
-```typescript
-import { Context } from '@contextprotocol/sdk';
+## 🌐 Accessing Context Data
 
-const ctx = new Context({ apiKey: 'your_api_key_here' });
+Every data on Context is publicly available, free, and forever for other developers to use locally through our public gateway:
 
-async function createDocument() {
-    const data = {
-        title: "Initial Document",
-        content: "This is the initial content of the document."
-    };
-
-    const document = await ctx.createDocument("newDocumentPath", data, [], false);
-    console.log(`Document created on: ${document.path}`);
-
-    return document;
-}
+```bash
+https://rpc.ctx.xyz/contextprotocol/domain/path/to/document
 ```
 
-### 2. Define and Add a Schema
-Next, define a JSON schema and use it to create a new template on your domain.
-
-```typescript
-async function createTemplate() {
-    const schema = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": {
-            "title": {
-                "type": "string",
-                "description": "The title of the document."
-            },
-            "content": {
-                "type": "string",
-                "description": "The content of the document."
-            }
-        },
-        "required": ["title", "content"],
-        "additionalProperties": false
-    };
-
-    const template = await ctx.createTemplate("templatePath", schema, []);
-    console.log(`Template created on: ${template.path}`);
-
-    return template;
-}
-```
-
-### 3. Update the Document
-Finally, update the previously created document with new data and apply the newly created template.
-
-```typescript
-async function updateDocument(documentPath, templatePath) {
-    const updatedData = {
-        title: "Updated Document",
-        content: "This is the updated content of the document."
-    };
-    const templatesToInstall = [templatePath];  // Use the path of the newly created template
-
-    const doc = await ctx.document(documentPath)
-    const updatedDoc = await doc.update(updatedData, templatesToInstall);
-    console.log("Document updated successfully.");
-}
-```
+For more detailed information and examples, visit the [official Context SDK documentation](https://docs.ctx.xyz).
 
 
-## Documentation
-For more detailed information, visit the [official Context SDK documentation](https://docs.ctx.xyz).
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
