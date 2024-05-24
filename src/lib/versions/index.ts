@@ -1,9 +1,9 @@
 import axios from "axios";
-
-import { getHttpErrorMessage } from "../../utils/getHttpErrorMessage";
 import { getHttpHeaders } from "../../utils/getHttpHeader";
 import { Config } from "../types";
 import { TAllVersionsResponse, TDocumentVersionFilter } from "./type";
+import { ContextError } from "../../utils/ContextError";
+import { _get } from "../index";
 
 export const getVersions = async (
   path: string,
@@ -12,16 +12,10 @@ export const getVersions = async (
   config: Config,
 ): Promise<TAllVersionsResponse> => {
   const url = `${config.url}/documents/versions/${path}`;
-  try {
-    const response = await axios.get(url, {
-      params: queryParams,
-      headers: getHttpHeaders(apiKey),
-    });
-    return {
-      versions: response.data.versions,
-      total: response.data.total,
-    } as TAllVersionsResponse;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  const response = await _get<TAllVersionsResponse>(url, queryParams, apiKey);
+
+  return {
+    versions: response.data.versions,
+    total: response.data.total,
+  } as TAllVersionsResponse;
 };

@@ -13,7 +13,7 @@ import {
 } from "./lib/domains/types";
 import { Config } from "./lib/types";
 import { ContextConfig } from "./utils/ContextConfig";
-import { ContextError, ContextErrorReason } from "./utils/ContextError";
+import { ContextError } from "./utils/ContextError";
 import { TMetadata } from "./lib/versions/type";
 
 export class Context {
@@ -188,25 +188,12 @@ export class Context {
     await this._checkIfSDKIsInitialized();
 
     let tDomain;
-    try {
-      tDomain = await lib.getDomain(
-        true,
-        name,
-        this._contextConfig.apiKey,
-        this._contextConfig.config,
-      );
-    } catch (e) {
-      if (e instanceof ContextError) {
-        const contextError = e;
-        switch (contextError.reason) {
-          case ContextErrorReason.DomainNotFound:
-            return undefined;
-          default:
-            break;
-        }
-      }
-      throw e;
-    }
+    tDomain = await lib.getDomain(
+      true,
+      name,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+    );
 
     return new Domain(tDomain);
   };
@@ -234,25 +221,13 @@ export class Context {
     await this._checkIfSDKIsInitialized();
     let tDocument;
 
-    try {
-      tDocument = await lib.getDocument(
-        true,
-        path,
-        this._contextConfig.apiKey,
-        this._contextConfig.config,
-      );
-    } catch (e) {
-      if (e instanceof ContextError) {
-        const contextError = e;
-        switch (contextError.reason) {
-          case ContextErrorReason.DocumentNotFound:
-            return null;
-          default:
-            break;
-        }
-      }
-      throw e;
-    }
+    tDocument = await lib.getDocument(
+      true,
+      path,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+    );
+
     return new Document(tDocument);
   };
 }

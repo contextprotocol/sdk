@@ -50,7 +50,7 @@ export class Domain {
       this.#contextConfig.config,
     );
     if (!tDocument) {
-        return null;
+      return null;
     }
     return new Document(tDocument);
   };

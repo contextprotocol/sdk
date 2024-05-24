@@ -1,8 +1,3 @@
-import axios from "axios";
-
-import { ContextError, ContextErrorReason } from "../../utils/ContextError";
-import { getHttpErrorMessage } from "../../utils/getHttpErrorMessage";
-import { getHttpHeaders } from "../../utils/getHttpHeader";
 import {
   extractPathAndVersionNumber,
   transformVersionNumberToObject,
@@ -12,6 +7,7 @@ import { TAllDocumentsResponse, TDocument, TDocumentFilter } from "./types";
 import { TMetadata, TVersion } from "../versions/type";
 import { FormData } from "formdata-node";
 import { fileFromPath } from "formdata-node/file-from-path";
+import { _get, _patch, _post } from "../index";
 
 export const getAllDocuments = async (
   fromPublicEndpoint: boolean,
@@ -22,20 +18,14 @@ export const getAllDocuments = async (
   const url = fromPublicEndpoint
     ? `${config.url}/public/documents`
     : `${config.url}/documents`;
-  try {
-    const response = await axios.get(url, {
-      params: queryParams,
-      headers: getHttpHeaders(apiKey),
-    });
-    return {
-      documents: response.data.documents,
-      total: response.data.total,
-      limit: response.data.limit,
-      offset: response.data.offset,
-    } as TAllDocumentsResponse;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  const response = await _get<TAllDocumentsResponse>(url, queryParams, apiKey);
+
+  return {
+    documents: response.data.documents,
+    total: response.data.total,
+    limit: response.data.limit,
+    offset: response.data.offset,
+  } as TAllDocumentsResponse;
 };
 
 export const getDocument = async (
@@ -47,19 +37,8 @@ export const getDocument = async (
   const url = fromPublicEndpoint
     ? `${config.url}/public/documents/${name}`
     : `${config.url}/documents/${name}`;
-  try {
-    const response = await axios.get(url, {
-      headers: getHttpHeaders(apiKey),
-    });
-    if (response.status === 403) {
-      throw new ContextError(ContextErrorReason.AuthError);
-    } else if (response.status === 404) {
-      throw new ContextError(ContextErrorReason.DocumentNotFound);
-    }
-    return response.data.document;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  const response = await _get<{ document: TDocument }>(url, {}, apiKey);
+  return response.data.document;
 };
 
 export const createDocument = async (
@@ -87,21 +66,8 @@ export const createDocument = async (
       ...versionFilter,
     },
   };
-  try {
-    const response = await axios.post(url, createDoc, {
-      headers: getHttpHeaders(apiKey),
-    });
-
-    if (response.status === 403) {
-      throw new ContextError(ContextErrorReason.AuthError);
-    } else if (response.status === 404) {
-      throw new ContextError(ContextErrorReason.DocumentNotFound);
-    }
-
-    return response.data.document;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  const response = await _post<{ document: TDocument }>(url, createDoc, apiKey);
+  return response.data.document;
 };
 
 export const updateDocument = async (
@@ -118,21 +84,8 @@ export const updateDocument = async (
     templates,
     versionNumber,
   };
-  try {
-    const response = await axios.patch(url, updateDoc, {
-      headers: getHttpHeaders(apiKey),
-    });
-
-    if (response.status === 403) {
-      throw new ContextError(ContextErrorReason.AuthError);
-    } else if (response.status === 404) {
-      throw new ContextError(ContextErrorReason.DocumentNotFound);
-    }
-
-    return response.data;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  const response = await _patch<TDocument>(url, updateDoc, apiKey);
+  return response.data;
 };
 
 export const updateMetadata = async (
@@ -143,18 +96,12 @@ export const updateMetadata = async (
   versionNumber?: string,
 ): Promise<TDocument> => {
   const url = `${config.url}/documents/metadata/${path}`;
-  try {
-    const response = await axios.patch(
-      url,
-      { metadata, versionNumber },
-      {
-        headers: getHttpHeaders(apiKey),
-      },
-    );
-    return response.data.document;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  let response = await _patch<{ document: TDocument }>(
+    url,
+    { metadata, versionNumber },
+    apiKey,
+  );
+  return response.data.document;
 };
 
 export const updateAsset = async (
@@ -164,7 +111,7 @@ export const updateAsset = async (
   versionNumber: string | undefined,
   apiKey: string,
   config: Config,
-): Promise<{ asset: { document: TDocument; version: TVersion } } | null> => {
+): Promise<{ asset: { document: TDocument; version: TVersion } }> => {
   const url = `${config.url}/assets/${path}`;
 
   const body = versionNumber ? { metadata, versionNumber } : { metadata };
@@ -172,19 +119,8 @@ export const updateAsset = async (
   formData.append("file", await fileFromPath(filePath));
   formData.append("body", JSON.stringify(body));
 
-  try {
-    const response = await axios.patch(url, formData, {
-      headers: {
-        ...getHttpHeaders(apiKey),
-      },
-    });
-
-    if (response.status === 403) {
-      throw new ContextError(ContextErrorReason.AuthError);
-    }
-
-    return response.data;
-  } catch (error) {
-    throw new Error(`ContextSDK: ${getHttpErrorMessage(error)}`);
-  }
+  const response = await _patch<{
+    asset: { document: TDocument; version: TVersion };
+  }>(url, formData, apiKey);
+  return response.data;
 };
