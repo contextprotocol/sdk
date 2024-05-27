@@ -1,23 +1,19 @@
 export class ContextError extends Error {
-  readonly _details?: string | undefined;
-  readonly _statusCode?: number | undefined;
+  readonly #error?: string | undefined;
+  readonly #statusCode?: number | undefined;
 
-  constructor(error: {
-    message: string;
-    details?: string;
-    statusCode?: number;
-  }) {
+  constructor(error: { message: string; error?: string; statusCode?: number }) {
     super();
     super.message = error.message;
-    this._details = error?.details;
-    this._statusCode = error?.statusCode;
+    this.#error = error?.error;
+    this.#statusCode = error?.statusCode;
   }
 
-  get details(): string | undefined {
-    return this._details;
+  get error(): string | undefined {
+    return this.#error;
   }
 
   get statusCode(): number | undefined {
-    return this._statusCode;
+    return this.#statusCode;
   }
 }

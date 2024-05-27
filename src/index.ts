@@ -23,7 +23,10 @@ export class Context {
 
   constructor(contextInit: { apiKey: string; config?: Partial<Config> }) {
     if (!contextInit.apiKey) {
-      throw new Error("ContextSDK: API key is required");
+      throw new ContextError({
+        message: "API key is required",
+        error: `API key is required`,
+      });
     }
     this._contextConfig = ContextConfig.getInstance();
     this._contextConfig.init(contextInit.config);
@@ -110,16 +113,18 @@ export class Context {
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, false);
+    return this._createDocument(path, data, templates, metadata,false);
   };
 
   createTemplate = async (
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, true);
+    return this._createDocument(path, data, templates,  metadata,true);
   };
 
   createAsset = async (
@@ -141,6 +146,7 @@ export class Context {
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
     isTemplate,
   ) => {
     const versionIds = await Promise.all(
@@ -161,6 +167,7 @@ export class Context {
       versionIds,
       this._contextConfig.apiKey,
       this._contextConfig.config,
+        metadata,
       isTemplate,
     );
 

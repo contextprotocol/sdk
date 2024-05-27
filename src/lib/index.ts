@@ -72,10 +72,15 @@ export async function _patch<T>(
 }
 
 function _handleError(error: AxiosError) {
+  if (error.code === "ECONNREFUSED") {
+    return new ContextError({
+      message: "Connection refused",
+    });
+  }
   if (error.response && error.response.status && error.response.status >= 400) {
     const data = error?.response?.data;
     const err = data
-      ? (data as { message: string; details?: string; statusCode?: number })
+      ? (data as { message: string; error?: string; statusCode?: number })
       : { message: "Internal server error" };
 
     return new ContextError(err);

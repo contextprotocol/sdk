@@ -47,6 +47,7 @@ export const createDocument = async (
   templates: string[],
   apiKey: string,
   config: Config,
+  metadata: TMetadata = {},
   isTemplate = false,
 ): Promise<TDocument> => {
   const url = `${config.url}/documents`;
@@ -64,6 +65,7 @@ export const createDocument = async (
       data,
       templates,
       ...versionFilter,
+      metadata,
     },
   };
   const response = await _post<{ document: TDocument }>(url, createDoc, apiKey);
@@ -74,7 +76,6 @@ export const updateDocument = async (
   fullPath: string,
   data: any,
   templates: string[],
-  versionNumber: string | undefined,
   apiKey: string,
   config: Config,
 ): Promise<TDocument> => {
@@ -82,7 +83,6 @@ export const updateDocument = async (
   const updateDoc = {
     data,
     templates,
-    versionNumber,
   };
   const response = await _patch<TDocument>(url, updateDoc, apiKey);
   return response.data;
@@ -93,12 +93,11 @@ export const updateMetadata = async (
   metadata: TMetadata,
   apiKey: string,
   config: Config,
-  versionNumber?: string,
 ): Promise<TDocument> => {
   const url = `${config.url}/documents/metadata/${path}`;
   let response = await _patch<{ document: TDocument }>(
     url,
-    { metadata, versionNumber },
+    { metadata },
     apiKey,
   );
   return response.data.document;
@@ -108,13 +107,12 @@ export const updateAsset = async (
   path: string,
   filePath: string,
   metadata: TMetadata | undefined,
-  versionNumber: string | undefined,
   apiKey: string,
   config: Config,
 ): Promise<{ asset: { document: TDocument; version: TVersion } }> => {
   const url = `${config.url}/assets/${path}`;
 
-  const body = versionNumber ? { metadata, versionNumber } : { metadata };
+  const body = { metadata };
   const formData = new FormData();
   formData.append("file", await fileFromPath(filePath));
   formData.append("body", JSON.stringify(body));

@@ -7,6 +7,7 @@ import {
 } from "../versions/type";
 import * as documentlib from "./index";
 import { DocumentType, TDocument } from "./types";
+import { ContextError } from "../../utils/ContextError";
 
 export class Document {
   readonly #document: TDocument;
@@ -101,12 +102,11 @@ export class Document {
     return new Document(tDoc);
   }
 
-  async update(data: any, templates: string[] = [], versionNumber?: string) {
+  async update(data: any, templates: string[] = []) {
     const version = await documentlib.updateDocument(
       `${this.path}`,
       data,
       templates,
-      versionNumber,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );
@@ -123,30 +123,27 @@ export class Document {
     return new Document(tDocument);
   }
 
-  async updateMetadata(metadata: TMetadata, versionNumber?: string) {
+  async updateMetadata(metadata: TMetadata) {
     const tDocument = await documentlib.updateMetadata(
       `${this.path}`,
       metadata,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
-      versionNumber,
     );
     return new Document(tDocument);
   }
 
-  async updateAsset(
-    filePath: string,
-    metadata?: TMetadata,
-    newVesionNumber?: string,
-  ) {
+  async updateAsset(filePath: string, metadata?: TMetadata) {
     if (this.#document.type !== DocumentType.Asset) {
-      throw new Error("Document is not an asset");
+      throw new ContextError({
+        message: "This document is not an asset",
+        error: "This document is not an asset",
+      });
     }
     const asset = await documentlib.updateAsset(
       `${this.path}`,
       filePath,
       metadata,
-      newVesionNumber,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
     );

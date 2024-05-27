@@ -59,16 +59,18 @@ export class Domain {
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, false);
+    return this._createDocument(path, data, templates, metadata,false);
   };
 
   createTemplate = async (
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, true);
+    return this._createDocument(path, data, templates, metadata, true);
   };
 
   createAsset = async (
@@ -90,6 +92,7 @@ export class Domain {
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
     isTemplate = false,
   ) => {
     const versionIds = await Promise.all(
@@ -110,6 +113,7 @@ export class Domain {
       versionIds,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
+        metadata,
       isTemplate,
     );
 
