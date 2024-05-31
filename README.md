@@ -113,10 +113,7 @@ Update an existing document:
 
 ```typescript
 const updatedData = YOUR_UPDATED_AWESOME_JSON_DATA;  // Updated JSON data
-const templatesToInstall = ["template_path"];  // Optional array of templates
-const versionNumber = "X.Y.Z";  // Optional specific version
-
-await document.update(updatedData, templatesToInstall, versionNumber);
+const doc = await document.update(updatedData);
 ```
 
 ### Adding Metadata to a Document
@@ -126,8 +123,6 @@ You can add metadata to a document using the `addMetadata` method. The metadata 
 const metadata = { name: "Document Name", description: "Document Description", readme: "Document Readme as markdown" };
 await document.addMetadata(metadata);
 ```
-
-
 
 ## 📐 Creating Templates
 
@@ -162,9 +157,20 @@ Use the defined schema to create a new template:
 ```typescript
 const template = await ctx.createTemplate("template_path", schema, []);
 ```
-
-
-
+## Installing templates
+Once we have the template, we can install it in a document by using the `install` method:
+```typescript
+const document = await ctx.document("document_path");
+const templateArrayToInstall = ["template_path"];
+const newDoc = await document.install(templateArrayToInstall);
+```
+## Uninstalling templates
+To uninstall a template from a document, we can use the `uninstall` method:
+```typescript
+const document = await ctx.document("document_path");
+const templateArrayToUninstall = ["template_path"];
+const newDoc = await document.uninstall(templateArrayToUninstall);
+```
 ## 📦 Assets
 
 ### Upload new Assets
@@ -197,7 +203,16 @@ https://rpc.ctx.xyz/domain/path/to/document
 
 For more detailed information and examples, visit the [official Context SDK documentation](https://docs.ctx.xyz).
 
+## 👨‍🔧 Error Handling
+When calling a function, you can check if an error occurred by checking the `error` property in the returned object:
 
-
+```typescript
+const document = await ctx.document("document_path");
+if("error" in document){
+  console.error(document.error); // Error message
+  console.error(document.message); // Detailed error message
+  console.error(document.statusCode); // HTTP status code
+}
+```
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

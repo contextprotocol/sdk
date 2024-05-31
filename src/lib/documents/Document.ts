@@ -110,12 +110,11 @@ export class Document {
     }
   }
 
-  async update(data: any, templates: string[] = []) {
+  async update(data: any) {
     try {
       const version = await documentlib.updateDocument(
         `${this.path}`,
         data,
-        templates,
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );

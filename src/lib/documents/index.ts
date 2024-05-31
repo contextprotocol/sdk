@@ -75,14 +75,12 @@ export const createDocument = async (
 export const updateDocument = async (
   fullPath: string,
   data: any,
-  templates: string[],
   apiKey: string,
   config: Config,
 ): Promise<TDocument> => {
   const url = `${config.url}/documents/${fullPath}`;
   const updateDoc = {
     data,
-    templates,
   };
   const response = await _patch<TDocument>(url, updateDoc, apiKey);
   return response.data;

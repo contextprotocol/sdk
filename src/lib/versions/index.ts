@@ -1,8 +1,5 @@
-import axios from "axios";
-import { getHttpHeaders } from "../../utils/getHttpHeader";
 import { Config } from "../types";
 import { TAllVersionsResponse, TDocumentVersionFilter } from "./type";
-import { ContextError } from "../../utils/ContextError";
 import { _get } from "../index";
 
 export const getVersions = async (
