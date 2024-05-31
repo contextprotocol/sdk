@@ -4,12 +4,14 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 
 import { Config } from "./types";
 import { getHttpHeaders } from "../utils/getHttpHeader";
-import { ContextError } from "../utils/ContextError";
+import { ContextError, ContextErrorResponse } from "../utils/ContextError";
 import { TDocument } from "./documents/types";
 import { TMetadata, TVersion } from "./versions/type";
 
 export { getAllDocuments, getDocument, createDocument } from "./documents";
 export { getAllDomains, getDomain } from "./domains";
+
+export type ReturnValue<T> = Promise<T | ContextErrorResponse>;
 
 export const uploadAsset = async (
   path: string,

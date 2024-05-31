@@ -4,6 +4,8 @@ import * as doclib from "../documents/index";
 import { TDomain } from "./types";
 import * as lib from "../index";
 import { TMetadata } from "../versions/type";
+import { ContextError, ContextErrorResponse } from "../../utils/ContextError";
+import { ReturnValue } from "../index";
 
 export class Domain {
   readonly #domain: TDomain;
@@ -43,16 +45,19 @@ export class Domain {
   }
 
   document = async (path: string, publicEndpoint = false) => {
-    const tDocument = await doclib.getDocument(
-      publicEndpoint,
-      `${this.name}/${path}`,
-      this.#contextConfig.apiKey,
-      this.#contextConfig.config,
-    );
-    if (!tDocument) {
-      return null;
+    try {
+      const tDocument = await doclib.getDocument(
+        publicEndpoint,
+        `${this.name}/${path}`,
+        this.#contextConfig.apiKey,
+        this.#contextConfig.config,
+      );
+
+      return new Document(tDocument);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
     }
-    return new Document(tDocument);
   };
 
   createDocument = async (
@@ -61,7 +66,12 @@ export class Domain {
     templates: string[] = [],
     metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, metadata,false);
+    try {
+      return await this._createDocument(path, data, templates, metadata, false);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   createTemplate = async (
@@ -70,22 +80,32 @@ export class Domain {
     templates: string[] = [],
     metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, metadata, true);
+    try {
+      return await this._createDocument(path, data, templates, metadata, true);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   createAsset = async (
     documentPath: string,
     filePath: string,
     metadata?: TMetadata,
-  ): Promise<Document> => {
-    const asset = await lib.uploadAsset(
-      documentPath,
-      filePath,
-      metadata,
-      this.#contextConfig.apiKey,
-      this.#contextConfig.config,
-    );
-    return new Document(asset!.asset.document);
+  ): ReturnValue<Document> => {
+    try {
+      const asset = await lib.uploadAsset(
+        documentPath,
+        filePath,
+        metadata,
+        this.#contextConfig.apiKey,
+        this.#contextConfig.config,
+      );
+      return new Document(asset!.asset.document);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   private _createDocument = async (
@@ -113,7 +133,7 @@ export class Domain {
       versionIds,
       this.#contextConfig.apiKey,
       this.#contextConfig.config,
-        metadata,
+      metadata,
       isTemplate,
     );
 

@@ -33,7 +33,7 @@ export const getDocument = async (
   name: string,
   apiKey: string,
   config: Config,
-): Promise<TDocument | null> => {
+): Promise<TDocument> => {
   const url = fromPublicEndpoint
     ? `${config.url}/public/documents/${name}`
     : `${config.url}/documents/${name}`;
@@ -120,5 +120,36 @@ export const updateAsset = async (
   const response = await _patch<{
     asset: { document: TDocument; version: TVersion };
   }>(url, formData, apiKey);
+  return response.data;
+};
+
+export const installTemplates = async (
+  path: string,
+  templatePathArray: string[],
+  apiKey: string,
+  config: Config,
+): Promise<TDocument> => {
+  const url = `${config.url}/documents/install/${path}`;
+  const response = await _patch<TDocument>(
+    url,
+    { templates: templatePathArray },
+    apiKey,
+  );
+
+  return response.data;
+};
+
+export const uninstallTemplates = async (
+  path: string,
+  templatePathArray: string[],
+  apiKey: string,
+  config: Config,
+): Promise<TDocument> => {
+  const url = `${config.url}/documents/uninstall/${path}`;
+  const response = await _patch<TDocument>(
+    url,
+    { templates: templatePathArray },
+    apiKey,
+  );
   return response.data;
 };

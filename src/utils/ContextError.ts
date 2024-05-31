@@ -1,3 +1,9 @@
+export interface ContextErrorResponse {
+  message: string;
+  statusCode?: number;
+  error?: string;
+}
+
 export class ContextError extends Error {
   readonly #error?: string | undefined;
   readonly #statusCode?: number | undefined;
@@ -15,5 +21,13 @@ export class ContextError extends Error {
 
   get statusCode(): number | undefined {
     return this.#statusCode;
+  }
+
+  public getErrorObject(): ContextErrorResponse {
+    return {
+      message: this.message,
+      statusCode: this.#statusCode,
+      error: this.#error ?? "Context Error",
+    };
   }
 }
