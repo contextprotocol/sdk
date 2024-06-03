@@ -49,7 +49,6 @@ export const createDocument = async (
   config: Config,
   metadata: TMetadata = {},
   isTemplate = false,
-  metadata?: TMetadata,
 ): Promise<TDocument> => {
   const url = `${config.url}/documents`;
   const { pathOrId, versionNumber } = extractPathAndVersionNumber("", fullPath);
@@ -67,7 +66,6 @@ export const createDocument = async (
       templates,
       metadata,
       ...versionFilter,
-      metadata,
     },
   };
   const response = await _post<{ document: TDocument }>(url, createDoc, apiKey);
