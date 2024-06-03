@@ -1,29 +1,33 @@
-export enum ContextErrorReason {
-  InternalError = 0,
-  AuthError = 1,
-  DomainNotFound = 2,
-  DocumentNotFound = 3,
+export interface ContextErrorResponse {
+  message: string;
+  statusCode?: number;
+  error?: string;
 }
 
 export class ContextError extends Error {
-  public reason: ContextErrorReason;
+  readonly #error?: string | undefined;
+  readonly #statusCode?: number | undefined;
 
-  constructor(reason: ContextErrorReason, message?: string) {
+  constructor(error: { message: string; error?: string; statusCode?: number }) {
     super();
-    super.message = message ?? ContextError._getMessage(reason);
-    this.reason = reason;
+    super.message = error.message;
+    this.#error = error?.error;
+    this.#statusCode = error?.statusCode;
   }
 
-  private static _getMessage(reason: ContextErrorReason): string {
-    return (this.messages as { [reason in ContextErrorReason]: string })[
-      reason
-    ];
+  get error(): string | undefined {
+    return this.#error;
   }
 
-  static messages = {
-    [ContextErrorReason.InternalError]: "Internal Error",
-    [ContextErrorReason.AuthError]: "Authentication Error",
-    [ContextErrorReason.DomainNotFound]: "Domain not found",
-    [ContextErrorReason.DocumentNotFound]: "Document not found",
-  };
+  get statusCode(): number | undefined {
+    return this.#statusCode;
+  }
+
+  public getErrorObject(): ContextErrorResponse {
+    return {
+      message: this.message,
+      statusCode: this.#statusCode,
+      error: this.#error ?? "Context Error",
+    };
+  }
 }
