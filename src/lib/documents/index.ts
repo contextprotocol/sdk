@@ -93,12 +93,12 @@ export const updateMetadata = async (
   config: Config,
 ): Promise<TDocument> => {
   const url = `${config.url}/documents/metadata/${path}`;
-  let response = await _patch<{ document: TDocument }>(
+  let response = await _patch<TDocument>(
     url,
     { metadata },
     apiKey,
   );
-  return response.data.document;
+  return response.data;
 };
 
 export const updateAsset = async (
