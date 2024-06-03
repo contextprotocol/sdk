@@ -13,8 +13,9 @@ import {
 } from "./lib/domains/types";
 import { Config } from "./lib/types";
 import { ContextConfig } from "./utils/ContextConfig";
-import { ContextError, ContextErrorReason } from "./utils/ContextError";
+import { ContextError, ContextErrorResponse } from "./utils/ContextError";
 import { TMetadata } from "./lib/versions/type";
+import { ReturnValue } from "./lib";
 
 export class Context {
   private _contextConfig: ContextConfig;
@@ -23,7 +24,10 @@ export class Context {
 
   constructor(contextInit: { apiKey: string; config?: Partial<Config> }) {
     if (!contextInit.apiKey) {
-      throw new Error("ContextSDK: API key is required");
+      throw new ContextError({
+        message: "API key is required",
+        error: `API key is required`,
+      });
     }
     this._contextConfig = ContextConfig.getInstance();
     this._contextConfig.init(contextInit.config);
@@ -58,93 +62,123 @@ export class Context {
     };
   };
 
-  domain = async (name?: string): Promise<Domain | undefined> => {
-    await this._checkIfSDKIsInitialized();
+  domain = async (name?: string): ReturnValue<Domain | undefined> => {
+    try {
+      await this._checkIfSDKIsInitialized();
 
-    if (!name) {
-      return this._domain;
+      if (!name) {
+        return this._domain;
+      }
+
+      const tDomain = await lib.getDomain(
+        false,
+        name,
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+      );
+      if (!tDomain) return undefined;
+      return new Domain(tDomain);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
     }
-
-    const tDomain = await lib.getDomain(
-      false,
-      name,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-    );
-    if (!tDomain) return undefined;
-    return new Domain(tDomain);
   };
 
   documents = async (
     documentFilter?: TDocumentFilter,
-  ): Promise<TAllDocumentsResponse> => {
-    await this._checkIfSDKIsInitialized();
+  ): ReturnValue<TAllDocumentsResponse> => {
+    try {
+      await this._checkIfSDKIsInitialized();
 
-    const documentsResponse = await lib.getAllDocuments(
-      this._domain === undefined,
-      documentFilter || {},
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-    );
-    return {
-      ...documentsResponse,
-      documents: documentsResponse.documents.map(
-        (d) => new Document(d as TDocument),
-      ),
-    };
+      const documentsResponse = await lib.getAllDocuments(
+        this._domain === undefined,
+        documentFilter || {},
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+      );
+      return {
+        ...documentsResponse,
+        documents: documentsResponse.documents.map(
+          (d) => new Document(d as TDocument),
+        ),
+      };
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
-  document = async (path: string): Promise<Document> => {
-    await this._checkIfSDKIsInitialized();
+  document = async (path: string): ReturnValue<Document> => {
+    try {
+      await this._checkIfSDKIsInitialized();
 
-    const documentResponse = await lib.getDocument(
-      false,
-      path,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-    );
-    return new Document(documentResponse as TDocument);
+      const documentResponse = await lib.getDocument(
+        false,
+        path,
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+      );
+      return new Document(documentResponse as TDocument);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   createDocument = async (
     path: string,
     data: any,
     templates: string[] = [],
-    metadata?: TMetadata,
+    metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, false, metadata);
+    try {
+      return await this._createDocument(path, data, templates, metadata, false);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   createTemplate = async (
     path: string,
     data: any,
     templates: string[] = [],
-    metadata?: TMetadata,
+    metadata: TMetadata = {},
   ) => {
-    return this._createDocument(path, data, templates, true, metadata);
+    try {
+      return await this._createDocument(path, data, templates, metadata, true);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   createAsset = async (
     documentPath: string,
     filePath: string,
     metadata?: TMetadata,
-  ): Promise<Document> => {
-    const asset = await lib.uploadAsset(
-      documentPath,
-      filePath,
-      metadata,
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-    );
-    return new Document(asset!.asset.document);
+  ): ReturnValue<Document> => {
+    try {
+      const asset = await lib.uploadAsset(
+        documentPath,
+        filePath,
+        metadata,
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+      );
+      return new Document(asset!.asset.document);
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   private _createDocument = async (
     path: string,
     data: any,
     templates: string[] = [],
+    metadata: TMetadata = {},
     isTemplate,
-    metadata?: TMetadata,
   ) => {
     const versionIds = await Promise.all(
       templates.map(async (template) => {
@@ -164,8 +198,8 @@ export class Context {
       versionIds,
       this._contextConfig.apiKey,
       this._contextConfig.config,
-      isTemplate,
       metadata,
+      isTemplate,
     );
 
     return new Document(tDocument);
@@ -173,7 +207,7 @@ export class Context {
 
   private _publicDomains = async (
     domainFilter?: TDomainFilter,
-  ): Promise<TAllDomainsResponse> => {
+  ): ReturnValue<TAllDomainsResponse> => {
     await this._checkIfSDKIsInitialized();
 
     const domainsResponse = await lib.getAllDomains(
@@ -192,71 +226,51 @@ export class Context {
     await this._checkIfSDKIsInitialized();
 
     let tDomain;
-    try {
-      tDomain = await lib.getDomain(
-        true,
-        name,
-        this._contextConfig.apiKey,
-        this._contextConfig.config,
-      );
-    } catch (e) {
-      if (e instanceof ContextError) {
-        const contextError = e;
-        switch (contextError.reason) {
-          case ContextErrorReason.DomainNotFound:
-            return undefined;
-          default:
-            break;
-        }
-      }
-      throw e;
-    }
+    tDomain = await lib.getDomain(
+      true,
+      name,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+    );
 
     return new Domain(tDomain);
   };
 
   private _publicDocuments = async (
     documentFilter?: TDocumentFilter,
-  ): Promise<TAllDocumentsResponse> => {
-    await this._checkIfSDKIsInitialized();
+  ): ReturnValue<TAllDocumentsResponse> => {
+    try {
+      await this._checkIfSDKIsInitialized();
 
-    const documentsResponse = await lib.getAllDocuments(
-      true,
-      documentFilter || {},
-      this._contextConfig.apiKey,
-      this._contextConfig.config,
-    );
-    return {
-      ...documentsResponse,
-      documents: documentsResponse.documents.map(
-        (d) => new Document(d as TDocument),
-      ),
-    };
+      const documentsResponse = await lib.getAllDocuments(
+        true,
+        documentFilter || {},
+        this._contextConfig.apiKey,
+        this._contextConfig.config,
+      );
+      return {
+        ...documentsResponse,
+        documents: documentsResponse.documents.map(
+          (d) => new Document(d as TDocument),
+        ),
+      };
+    } catch (e) {
+      const error = e as ContextError;
+      return error.getErrorObject();
+    }
   };
 
   private _publicDocument = async (path: string): Promise<Document | null> => {
     await this._checkIfSDKIsInitialized();
     let tDocument;
 
-    try {
-      tDocument = await lib.getDocument(
-        true,
-        path,
-        this._contextConfig.apiKey,
-        this._contextConfig.config,
-      );
-    } catch (e) {
-      if (e instanceof ContextError) {
-        const contextError = e;
-        switch (contextError.reason) {
-          case ContextErrorReason.DocumentNotFound:
-            return null;
-          default:
-            break;
-        }
-      }
-      throw e;
-    }
+    tDocument = await lib.getDocument(
+      true,
+      path,
+      this._contextConfig.apiKey,
+      this._contextConfig.config,
+    );
+
     return new Document(tDocument);
   };
 }
