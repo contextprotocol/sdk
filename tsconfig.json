@@ -4,7 +4,7 @@
     "module": "commonjs",
     "target": "es2022",
     "esModuleInterop": true,
-    "strict": false,
+    "strict": true,
     "outDir": "dist",
     "sourceMap": true,
     "inlineSources": true,
@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strictPropertyInitialization": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules"]

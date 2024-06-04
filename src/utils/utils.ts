@@ -7,7 +7,7 @@ import * as TJS from "typescript-json-schema";
 export function splitDomainAndDocumentAndVersion(path: string) {
   let domainName;
   let documentPath = path;
-  let versionNumber = null;
+  let versionNumber;
   if (path.includes("/")) {
     const [domain, ...restPath] = path.split("/");
     documentPath = restPath.join("/");
@@ -31,7 +31,7 @@ export function splitDomainAndDocumentAndVersion(path: string) {
 export function splitDomainAndDocumentAndVersionFilter(path: string) {
   const { domainName, documentPath, versionNumber } =
     splitDomainAndDocumentAndVersion(path);
-  let versionFilter = undefined;
+  let versionFilter;
   if (versionNumber) {
     versionFilter = transformVersionNumberToObject(versionNumber);
   }
@@ -46,9 +46,9 @@ export function transformVersionNumberToObject(versionNumber: string): {
 } {
   const versionArray = versionNumber.split(".");
   const versionFilter = {
-    major: 0,
+    major: 1,
     minor: 0,
-    patch: 1,
+    patch: 0,
   };
   if (
     !isNumberString(versionArray[0]) ||
@@ -83,7 +83,7 @@ function isNumberString(num: string): boolean {
 export function generateJsonSchema(
   typeName: string,
   typeDefinition: string,
-): object {
+): object | null {
   const tempFileName = path.join(os.tmpdir(), "temp-type-definition.ts");
   fs.writeFileSync(tempFileName, typeDefinition);
 

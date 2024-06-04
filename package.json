@@ -1,25 +1,35 @@
 {
   "name": "@contextprotocol/sdk",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "Context Protocol SDK",
   "main": "dist/index.js",
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "dist/**/*.d.ts"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/contextprotocol/sdk.git"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "engines": {
     "node": ">=18.x",
     "npm": ">=9.x"
   },
   "scripts": {
+    "release": "npm run format && npm run build && npm run generate:types",
     "build": "rm -rf dist && npx tsc",
     "lint": "eslint --ignore-path .gitignore . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write '*/**/*.{js,json,md,ts}'",
-    "format:check": "prettier --check '*/**/*.{js,json,md,ts}'"
+    "format:check": "prettier --check '*/**/*.{js,json,md,ts}'",
+    "generate:types": "tsc --emitDeclarationOnly --declaration --outDir dist"
   },
   "author": "",
   "license": "MIT",
