@@ -14,8 +14,9 @@ Every data on Context is publicly available, free, and forever for other develop
 - **Domains** → Domains represent verified and curated entities, such as companies, projects, or products.
 - **Documents** → Context Documents are files designed to store and organize JSON data. Each Document serves as a repository for specific sets of information, facilitating efficient data management and retrieval.
 - **Templates** → Context Templates help organize data by providing a standardized layout for storing information. With them, you can easily create, share, and utilize consistent data structures.
-- **Assets** → Context Assets are designed to store and organize any image or file. Each Asset serves as a source for specific data, facilitating efficient data management and retrieval.   
+- **Assets** → Context Assets are designed to store and organize any image or file. Each Asset serves as a source for specific data, facilitating efficient data management and retrieval.  
 <br />
+
 ![](./assets/whats-context.png?raw=true)
 
 *Poolside, Context and Alex as Domains, with Documents inside that contain relations between them. The Template "web3/token" used on the "context/token" Document.*
