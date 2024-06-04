@@ -11,8 +11,15 @@ Context is an abstraction layer designed to integrate Web3 storage technologies,
 Every data on Context is publicly available, free, and forever for other developers to use everywhere through our public gateway - i.e. [rpc.ctx.xyz/contextprotocol](https://rpc.ctx.xyz/contextprotocol)
 
 ### How it works
-Create documetnts
+- **Domains** → Domains represent verified and curated entities, such as companies, projects, or products.
+- **Documents** → Context Documents are files designed to store and organize JSON data. Each Document serves as a repository for specific sets of information, facilitating efficient data management and retrieval.
+- **Templates** → Context Templates help organize data by providing a standardized layout for storing information. With them, you can easily create, share, and utilize consistent data structures.
+- **Assets** → Context Assets are designed to store and organize any image or file. Each Asset serves as a source for specific data, facilitating efficient data management and retrieval.  
+<br />
+
 ![](./assets/whats-context.png?raw=true)
+
+*Poolside, Context and Alex as Domains, with Documents inside that contain relations between them. The Template "web3/token" used on the "context/token" Document.*
 
 ### Why use Context?
 Context Protocol is a Web3 Semantic Layer that brings your data:
@@ -23,6 +30,8 @@ Context Protocol is a Web3 Semantic Layer that brings your data:
 - **AI Empowerment** Context ensures that AI models are trained with structured and verified data, enhancing overall AI performance. 
 - **Brand Control** enabling real-time synchronization of your data ensuring updates are promptly propagated across all platforms and partners.
 - **Security Data** is stored on the blockchain.
+
+<br />
 
 ## ⚡ Getting started
 ### Install the SDK
@@ -46,6 +55,7 @@ const ctx = new Context({ apiKey: "your_api_key_here" }); // Replace with your A
 ```
 
 
+<br />
 
 ## 🌐 Working with Domains
 Domains represent verified and curated entities, such as companies, projects, or individuals.
@@ -55,11 +65,11 @@ Domains represent verified and curated entities, such as companies, projects, or
 Fetch details of a specific domain or the default domain associated with your API key:
 
 ```typescript
-// Fetch the default domain
+// Fetch your domain
 const yourDomain = await ctx.domain();
 
 // Fetch a specific domain
-const domain = await ctx.domain("domain_name");  // Returns null if not found
+const domain = await ctx.domain("domain_name");
 ```
 
 ### Domain Properties
@@ -74,13 +84,13 @@ console.log(domain.updatedAt);
 ```
 
 
+<br />
 
 ## 📄 Managing Documents
-Context Documents are files designed to store and organize JSON data. Each Document serves as a repository for specific sets of information, facilitating efficient data management and retrieval. Documents can be structured using Templates.
 
 
 ### Fetch Documents
-Fetch a specific document or template, from any domain:
+Fetch a specific document or template or asset, from any domain:
 
 ```typescript
 // Fetch a specific document
@@ -94,6 +104,9 @@ Access and display properties of a document:
 console.log(document.path);
 console.log(document.versionNumber);
 console.log(document.data);
+console.log(document.metadata);
+console.log(document.templates);
+console.log(document.type); // Document | Template | Asset
 console.log(document.createdAt);
 console.log(document.updatedAt);
 console.log(JSON.stringify(document));
@@ -119,12 +132,12 @@ const documentInVersionXYZ = await ctx.document("document_path?v=X.Y.Z");
 ```
 
 ### Create a Document
-Steps to create a new document within a domain:
+Steps to create a new document within your domain:
 
 ```typescript
 const data = YOUR_AWESOME_JSON_DATA;  // JSON data for the document
 const templates = ["template_path"];  // Optional array of template paths
-const metadata = { name: "Document Name", description: "Document Description", readme: "Document Readme as markdown" };  // Optional metadata
+const metadata = { name: "Document Name", description: "Document Description", readme: "ctx:domain/files/my_markdown" };  // Optional metadata
 
 const newDocument = await ctx.createDocument("document_path", data, templates, metadata);
 ```
@@ -134,19 +147,21 @@ Update an existing document:
 
 ```typescript
 const updatedData = YOUR_UPDATED_AWESOME_JSON_DATA;  // Updated JSON data
-const doc = await document.update(updatedData);
+const document = await ctx.document("document_path");
+const result = await document.update(updatedData);
 ```
 
 ### Adding Metadata to a Document
-You can add metadata to a document using the `addMetadata` method. The metadata object should contain the following (optional) fields: `name`, `description`, and `readme` as shown below:
+You can add/update metadata to a document anytime using the `addMetadata` method. The metadata object should contain the following (optional) fields: `name`, `description`, and `readme` (link to a Markdown document) as shown below:
 
 ```typescript
-const metadata = { name: "Document Name", description: "Document Description", readme: "Document Readme as markdown" };
+const metadata = { name: "Document Name", description: "Document Description", readme: "ctx:domain/files/my_markdown" };
 await document.addMetadata(metadata);
 ```
 
+<br />
+
 ## 📐 Creating Templates
-Context Templates help organize data by providing a standardized layout for storing information. With them, you can easily create, share, and utilize consistent data structures.
 
 
 ### Define a JSON Schema for a Template
@@ -178,17 +193,16 @@ const schema = generateJsonSchema(dataName, myDataType);
 Use the defined schema to create a new template:
 
 ```typescript
-const metadata = { name: "Template Name", description: "Template Description", readme: "Markdown document" };  // Optional metadata
-const template = await ctx.createTemplate("template_path", schema, [], metadata /* optional */);
+const template = await ctx.createTemplate("template_path", schema);
 ```
-## Installing templates
+### Installing Templates
 Once we have the template, we can install it in a document by using the `install` method:
 ```typescript
 const document = await ctx.document("document_path");
 const templateArrayToInstall = ["template_path"];
 const newDoc = await document.install(templateArrayToInstall);
 ```
-## Uninstalling templates
+### Uninstalling Templates
 To uninstall a template from a document, we can use the `uninstall` method:
 ```typescript
 const document = await ctx.document("document_path");
@@ -196,10 +210,9 @@ const templateArrayToUninstall = ["template_path"];
 const newDoc = await document.uninstall(templateArrayToUninstall);
 ```
 
+<br />
 
 ## 📦 Assets
-Context Assets are designed to store and organize any image or file. Each Asset serves as a source for specific data, facilitating efficient data management and retrieval.
-
 
 ### Upload new Assets
 As a user, you can upload assets to your domain. When uploading an asset, you can specify the document path where the asset will be stored.
@@ -215,7 +228,6 @@ You can update an existing asset by providing the document path and the local fi
 
 ```typescript
 const localFilePath = "file/path.jpg";
-const metadata = { name: "Updated Asset", description: "New description" };
 const asset = await ctxDocument.updateAsset(localFilePath, metadata /* optional */);
 ```
 
