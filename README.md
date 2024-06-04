@@ -17,6 +17,7 @@ Every data on Context is publicly available, free, and forever for other develop
 - **Assets** → Context Assets are designed to store and organize any image or file. Each Asset serves as a source for specific data, facilitating efficient data management and retrieval.   
 <br />
 ![](./assets/whats-context.png?raw=true)
+
 *Poolside, Context and Alex as Domains, with Documents inside that contain relations between them. The Template "web3/token" used on the "context/token" Document.*
 
 ### Why use Context?
