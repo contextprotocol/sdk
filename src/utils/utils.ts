@@ -3,6 +3,8 @@ import * as os from "os";
 import * as path from "path";
 
 import * as TJS from "typescript-json-schema";
+import {ContextResult, Failure} from "../lib";
+import {ContextError} from "./ContextError";
 
 export function splitDomainAndDocumentAndVersion(path: string) {
   let domainName;
@@ -98,4 +100,13 @@ export function generateJsonSchema(
   fs.unlinkSync(tempFileName);
 
   return schema;
+}
+
+export function _returnObject<T>(data: T): ContextResult<T> {
+  return Promise.resolve({ success: true, data });
+}
+
+export function _returnFailure(e: any): Failure {
+  const error = e as ContextError;
+  return { success: false, error: error.getErrorObject()};
 }
