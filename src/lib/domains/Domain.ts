@@ -4,8 +4,8 @@ import * as doclib from "../documents/index";
 import { TDomain } from "./types";
 import * as lib from "../index";
 import { TMetadata } from "../versions/type";
-import { ContextError, ContextErrorResponse } from "../../utils/ContextError";
-import { ReturnValue } from "../index";
+import { ContextResult } from "../index";
+import {_returnFailure, _returnObject} from "../../utils/utils";
 
 export class Domain {
   readonly #domain: TDomain;
@@ -44,7 +44,7 @@ export class Domain {
     return this.#domain.updatedAt;
   }
 
-  document = async (path: string, publicEndpoint = false) => {
+  document = async (path: string, publicEndpoint = false): ContextResult<Document> => {
     try {
       const tDocument = await doclib.getDocument(
         publicEndpoint,
@@ -53,10 +53,9 @@ export class Domain {
         this.#contextConfig.config,
       );
 
-      return new Document(tDocument);
+      return _returnObject(new Document(tDocument));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -67,10 +66,9 @@ export class Domain {
     metadata: TMetadata = {},
   ) => {
     try {
-      return await this._createDocument(path, data, templates, metadata, false);
+      return _returnObject(await this._createDocument(path, data, templates, metadata, false));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -81,10 +79,9 @@ export class Domain {
     metadata: TMetadata = {},
   ) => {
     try {
-      return await this._createDocument(path, data, templates, metadata, true);
+      return _returnObject(await this._createDocument(path, data, templates, metadata, true));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -92,7 +89,7 @@ export class Domain {
     documentPath: string,
     filePath: string,
     metadata?: TMetadata,
-  ): ReturnValue<Document> => {
+  ): ContextResult<Document> => {
     try {
       const asset = await lib.uploadAsset(
         documentPath,
@@ -101,10 +98,9 @@ export class Domain {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(asset!.asset.document);
+      return _returnObject(new Document(asset!.asset.document));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 

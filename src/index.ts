@@ -15,7 +15,14 @@ import { Config } from "./lib/types";
 import { ContextConfig } from "./utils/ContextConfig";
 import { ContextError, ContextErrorResponse } from "./utils/ContextError";
 import { TMetadata } from "./lib/versions/type";
-import { ReturnValue } from "./lib";
+import { ContextResult } from "./lib";
+import {_returnFailure, _returnObject} from "./utils/utils";
+
+export type { Domain } from "./lib/domains/Domain";
+export type { Document } from "./lib/documents/Document";
+export type { TAllDocumentsResponse, TDocumentFilter } from "./lib/documents/types";
+export type { ContextErrorResponse } from "./utils/ContextError";
+export type { ContextResult } from "./lib";
 
 export class Context {
   private _contextConfig: ContextConfig;
@@ -62,12 +69,12 @@ export class Context {
     };
   };
 
-  domain = async (name?: string): ReturnValue<Domain | undefined> => {
+  domain = async (name?: string): ContextResult<Domain | undefined> => {
     try {
       await this._checkIfSDKIsInitialized();
 
       if (!name) {
-        return this._domain;
+        return _returnObject(this._domain);
       }
 
       const tDomain = await lib.getDomain(
@@ -76,17 +83,16 @@ export class Context {
         this._contextConfig.apiKey,
         this._contextConfig.config,
       );
-      if (!tDomain) return undefined;
-      return new Domain(tDomain);
+      if (!tDomain) return _returnObject(undefined);
+      return _returnObject(new Domain(tDomain));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
   documents = async (
     documentFilter?: TDocumentFilter,
-  ): ReturnValue<TAllDocumentsResponse> => {
+  ): ContextResult<TAllDocumentsResponse> => {
     try {
       await this._checkIfSDKIsInitialized();
 
@@ -96,19 +102,19 @@ export class Context {
         this._contextConfig.apiKey,
         this._contextConfig.config,
       );
-      return {
+      const data = {
         ...documentsResponse,
         documents: documentsResponse.documents.map(
           (d) => new Document(d as TDocument),
         ),
       };
+      return _returnObject(data);
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
-  document = async (path: string): ReturnValue<Document> => {
+  document = async (path: string): ContextResult<Document> => {
     try {
       await this._checkIfSDKIsInitialized();
 
@@ -118,10 +124,9 @@ export class Context {
         this._contextConfig.apiKey,
         this._contextConfig.config,
       );
-      return new Document(documentResponse as TDocument);
+      return _returnObject(new Document(documentResponse as TDocument));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -132,10 +137,9 @@ export class Context {
     metadata: TMetadata = {},
   ) => {
     try {
-      return await this._createDocument(path, data, templates, metadata, false);
+      return _returnObject(await this._createDocument(path, data, templates, metadata, false));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -146,10 +150,9 @@ export class Context {
     metadata: TMetadata = {},
   ) => {
     try {
-      return await this._createDocument(path, data, templates, metadata, true);
+      return _returnObject(await this._createDocument(path, data, templates, metadata, true));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -157,7 +160,7 @@ export class Context {
     documentPath: string,
     filePath: string,
     metadata?: TMetadata,
-  ): ReturnValue<Document> => {
+  ): ContextResult<Document> => {
     try {
       const asset = await lib.uploadAsset(
         documentPath,
@@ -166,10 +169,9 @@ export class Context {
         this._contextConfig.apiKey,
         this._contextConfig.config,
       );
-      return new Document(asset!.asset.document);
+      return _returnObject(new Document(asset!.asset.document));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 
@@ -207,7 +209,7 @@ export class Context {
 
   private _publicDomains = async (
     domainFilter?: TDomainFilter,
-  ): ReturnValue<TAllDomainsResponse> => {
+  ) => {
     await this._checkIfSDKIsInitialized();
 
     const domainsResponse = await lib.getAllDomains(
@@ -216,10 +218,12 @@ export class Context {
       this._contextConfig.apiKey,
       this._contextConfig.config,
     );
-    return {
+    const data = {
       ...domainsResponse,
       domains: domainsResponse.domains.map((d) => new Domain(d as TDomain)),
     };
+
+    return data;
   };
 
   private _publicDomain = async (name: string): Promise<Domain | undefined> => {
@@ -238,7 +242,7 @@ export class Context {
 
   private _publicDocuments = async (
     documentFilter?: TDocumentFilter,
-  ): ReturnValue<TAllDocumentsResponse> => {
+  ) => {
     try {
       await this._checkIfSDKIsInitialized();
 
@@ -255,8 +259,7 @@ export class Context {
         ),
       };
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   };
 

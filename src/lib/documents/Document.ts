@@ -7,8 +7,9 @@ import {
 } from "../versions/type";
 import * as documentlib from "./index";
 import { DocumentType, TDocument } from "./types";
-import { ContextError, ContextErrorResponse } from "../../utils/ContextError";
-import { ReturnValue } from "../index";
+import { ContextError } from "../../utils/ContextError";
+import { ContextResult } from "../index";
+import {_returnFailure, _returnObject} from "../../utils/utils";
 
 export class Document {
   readonly #document: TDocument;
@@ -78,24 +79,24 @@ export class Document {
 
   async versions(
     versionFilter?: TDocumentVersionFilter,
-  ): ReturnValue<TAllVersionsResponse> {
+  ): ContextResult<TAllVersionsResponse> {
     try {
-      return versionlib.getVersions(
+      const versions = await versionlib.getVersions(
         `${this.path}`,
         versionFilter || {},
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
+      return _returnObject(versions);
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
   async getVersion(
     versionNumber: string,
     publicEndpoint = false,
-  ): ReturnValue<Document> {
+  ): ContextResult<Document> {
     try {
       const tDoc = await documentlib.getDocument(
         publicEndpoint,
@@ -103,14 +104,13 @@ export class Document {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(tDoc);
+      return _returnObject(new Document(tDoc));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
-  async update(data: any) {
+  async update(data: any): ContextResult<Document> {
     try {
       const version = await documentlib.updateDocument(
         `${this.path}`,
@@ -118,14 +118,13 @@ export class Document {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(version);
+      return _returnObject(new Document(version));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
-  async addMetadata(metadata: any) {
+  async addMetadata(metadata: any): ContextResult<Document> {
     try {
       const tDocument = await documentlib.updateMetadata(
         `${this.path}`,
@@ -133,14 +132,13 @@ export class Document {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(tDocument);
+      return _returnObject(new Document(tDocument));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
-  async install(templatePathArray: string[]) {
+  async install(templatePathArray: string[]): ContextResult<Document> {
     try {
       const tDocument = await documentlib.installTemplates(
         `${this.path}`,
@@ -148,14 +146,13 @@ export class Document {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(tDocument);
+      return _returnObject(new Document(tDocument));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
-  async uninstall(templatePathArray: string[]) {
+  async uninstall(templatePathArray: string[]): ContextResult<Document> {
     try {
       const tDocument = await documentlib.uninstallTemplates(
         `${this.path}`,
@@ -163,14 +160,13 @@ export class Document {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(tDocument);
+      return _returnObject(new Document(tDocument));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
-  async updateMetadata(metadata: TMetadata) {
+  async updateMetadata(metadata: TMetadata): ContextResult<Document> {
     try {
       const tDocument = await documentlib.updateMetadata(
         `${this.path}`,
@@ -178,14 +174,13 @@ export class Document {
         this.#contextConfig.apiKey,
         this.#contextConfig.config,
       );
-      return new Document(tDocument);
+      return _returnObject(new Document(tDocument));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 
-  async updateAsset(filePath: string, metadata?: TMetadata) {
+  async updateAsset(filePath: string, metadata?: TMetadata): ContextResult<Document> {
     try {
       if (this.#document.type !== DocumentType.Asset) {
         throw new ContextError({
@@ -201,10 +196,9 @@ export class Document {
         this.#contextConfig.config,
       );
 
-      return new Document(asset!.asset.document);
+      return _returnObject(new Document(asset!.asset.document));
     } catch (e) {
-      const error = e as ContextError;
-      return error.getErrorObject();
+      return _returnFailure(e);
     }
   }
 }

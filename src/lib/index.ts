@@ -11,7 +11,18 @@ import { TMetadata, TVersion } from "./versions/type";
 export { getAllDocuments, getDocument, createDocument } from "./documents";
 export { getAllDomains, getDomain } from "./domains";
 
-export type ReturnValue<T> = Promise<T | ContextErrorResponse>;
+export interface Success<T> {
+  success: true;
+  data: T;
+}
+
+export interface Failure {
+  success: false;
+  error: ContextErrorResponse;
+}
+
+export type Result<T> = Success<T> | Failure;
+export type ContextResult<T> = Promise<Result<T>>;
 
 export const uploadAsset = async (
   path: string,

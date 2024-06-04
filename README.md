@@ -148,7 +148,10 @@ Update an existing document:
 ```typescript
 const updatedData = YOUR_UPDATED_AWESOME_JSON_DATA;  // Updated JSON data
 const document = await ctx.document("document_path");
-const result = await document.update(updatedData);
+if (!document.success) {
+    // Handle error
+}
+const result = await document.data.update(updatedData);
 ```
 
 ### Adding Metadata to a Document
@@ -199,15 +202,23 @@ const template = await ctx.createTemplate("template_path", schema);
 Once we have the template, we can install it in a document by using the `install` method:
 ```typescript
 const document = await ctx.document("document_path");
+if (!document.success) {
+    // Handle error
+}
+
 const templateArrayToInstall = ["template_path"];
-const newDoc = await document.install(templateArrayToInstall);
+const newDoc = await document.data.install(templateArrayToInstall);
 ```
 ### Uninstalling Templates
 To uninstall a template from a document, we can use the `uninstall` method:
 ```typescript
 const document = await ctx.document("document_path");
+if (!document.success) {
+    // Handle error
+}
+
 const templateArrayToUninstall = ["template_path"];
-const newDoc = await document.uninstall(templateArrayToUninstall);
+const newDoc = await document.data.uninstall(templateArrayToUninstall);
 ```
 
 <br />
@@ -237,10 +248,10 @@ When calling a function, you can check if an error occurred by checking the `err
 
 ```typescript
 const document = await ctx.document("document_path");
-if("error" in document){
-  console.error(document.error); // Error message
-  console.error(document.message); // Detailed error message
-  console.error(document.statusCode); // HTTP status code
+if(document.success === false){
+  console.error(document.error.error); // Error message
+  console.error(document.error.message); // Detailed error message
+  console.error(document.error.statusCode); // HTTP status code
 }
 ```
 
