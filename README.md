@@ -76,11 +76,11 @@ const domain = await ctx.domain("domain_name");
 Access and display properties of a domain:
 
 ```typescript
-console.log(domain.name);
-console.log(domain.documents);
-console.log(domain.status);
-console.log(domain.createdAt);
-console.log(domain.updatedAt);
+console.log(domain.data.name);
+console.log(domain.data.documents);
+console.log(domain.data.status);
+console.log(domain.data.createdAt);
+console.log(domain.data.updatedAt);
 ```
 
 
@@ -101,22 +101,23 @@ const document = await ctx.document("document_path");  // "domain/path/to/file"
 Access and display properties of a document:
 
 ```typescript
-console.log(document.path);
-console.log(document.versionNumber);
-console.log(document.data);
-console.log(document.metadata);
-console.log(document.templates);
-console.log(document.type); // Document | Template | Asset
-console.log(document.createdAt);
-console.log(document.updatedAt);
-console.log(JSON.stringify(document));
+console.log(document.data.path);
+console.log(document.data.versionNumber);
+console.log(document.data.data);
+console.log(document.data.metadata);
+console.log(document.data.templates);
+console.log(document.data.type); // Document | Template | Asset
+console.log(document.data.txId);
+console.log(document.data.createdAt);
+console.log(document.data.updatedAt);
+console.log(JSON.stringify(document.data));
 ```
 
 ### List Document Versions
 Fetch a list of all versions of a document:
 
 ```typescript
-const documentVersions = await document.versions();
+const documentVersions = await document.data.versions();
 ```
 
 ### Fetch a Specific Document Version
@@ -125,7 +126,7 @@ You can fetch a specific version of a document in two different ways:
 ```typescript
 // By using the version method of the document:
 const document = await ctx.document("document_path");
-const documentVersion = await document.version("X.Y.Z");
+const documentVersion = await document.data.getVersion("X.Y.Z");
 
 // By specifying the version directly the document path:
 const documentInVersionXYZ = await ctx.document("document_path?v=X.Y.Z");
@@ -159,7 +160,7 @@ You can add/update metadata to a document anytime using the `addMetadata` method
 
 ```typescript
 const metadata = { name: "Document Name", description: "Document Description", readme: "ctx:domain/files/my_markdown" };
-await document.addMetadata(metadata);
+await document.data.addMetadata(metadata);
 ```
 
 <br />
@@ -205,7 +206,6 @@ const document = await ctx.document("document_path");
 if (!document.success) {
     // Handle error
 }
-
 const templateArrayToInstall = ["template_path"];
 const newDoc = await document.data.install(templateArrayToInstall);
 ```
@@ -216,7 +216,6 @@ const document = await ctx.document("document_path");
 if (!document.success) {
     // Handle error
 }
-
 const templateArrayToUninstall = ["template_path"];
 const newDoc = await document.data.uninstall(templateArrayToUninstall);
 ```
@@ -239,7 +238,7 @@ You can update an existing asset by providing the document path and the local fi
 
 ```typescript
 const localFilePath = "file/path.jpg";
-const asset = await ctxDocument.updateAsset(localFilePath, metadata /* optional */);
+const asset = await document.data.updateAsset(localFilePath, metadata /* optional */);
 ```
 
 
