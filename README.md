@@ -68,7 +68,7 @@ import { Context } from '@contextprotocol/sdk';
 const ctx = new Context({ apiKey: "your_api_key_here" }); // Replace with your API key
 ```
 
-Fetch details of a specific domain or the default domain associated with your API key:
+Fetch details about your domain or document, and easily create new Documents:
 
 ```typescript
 // Fetch your domain
@@ -80,7 +80,6 @@ const document = await ctx.document("document_path");  // "domain/path/to/file"
 // Create a new document
 const newDocument = await ctx.createDocument("document_path", data, templates, metadata);
 ```
-
 
 <br />
 
