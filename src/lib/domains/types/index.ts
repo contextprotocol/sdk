@@ -12,8 +12,10 @@ export type TDomain = TTimestamps & {
   userId: string;
   name: string;
   nameHash: string;
+  fullDomain: string;
+  tld: string;
   status: DomainStatus;
-  owner: string;
+  owner: any;
   documents: [];
   editor?: string;
 };

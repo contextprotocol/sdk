@@ -20,6 +20,14 @@ export class Domain {
     return this.#domain.name;
   }
 
+  get fullDomain() {
+    return this.#domain.fullDomain;
+  }
+
+  get tld() {
+    return this.#domain.tld;
+  }
+
   get documents() {
     return this.#domain.documents;
   }
